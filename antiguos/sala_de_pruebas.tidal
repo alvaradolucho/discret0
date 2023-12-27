@@ -1,0 +1,438 @@
+-- inicializar tidalcycles
+:script "C:/Users/Lucho Alvarado/Documents/automat4/dev/automat4_set_dev2/setup.tidal"
+
+  d1 $ stack[
+      dk # amp 0.15,
+      amen # amp 0.12 # drive' 0.3 0.1 0.1 0.15
+      # dsend "0.5 0 2 0 0 0 0 0 0 0 0.8 0 0 0 0 0"
+      ]
+  -- h1  $ randdk
+
+
+setcps(133/60/4)
+
+hush
+
+-- nuevo jesus 2
+
+
+  let dk = --sometimes (plyWith "<2 4>" ((|* amp 0.95)) . (|* rate 3) . (# dsend 0.5))
+          sometimes (fast 2) $ struct "t*8"
+          $ buf 53 # s "808oh" # rate 0.5 # humanize # lpf' (sinosc 1000 3000 0.125) 0.1
+          # rsend (triosc 0.5 1.5 0.5) # adsr' (triosc 0.05 0.15 0.5) (randosc 0.02 0.2) 0.1 0.1
+
+  let amen = slow 2 $ struct "t*16" $ s "amencutup" # buf (run 32 )
+          # adsr' 0.01 (randosc 0.1 0.3) 0.1 0.3 # lpf' 5000 0.05
+          # rate 0.8 # rsend "0 0 2 0 0 0 0 0 0 0 0.8 0 0 0 0 0" |+ rsend 0.2
+
+  d1 $ stack[
+      dk # amp 0.15,
+      amen # amp 0.12 # drive' 0.3 0.1 0.1 0.15
+      ]
+  -- h1  $ randdk
+
+d1 silence
+
+d2 $ struct "<t*16!4 ~!2>"
+  -- $ note ((run 40) + "<40 50>")
+  $ note "46 51 53 57 60 <65 69>"
+  |+ note "<-12 0 12>"
+  # s "fm1"
+  -- 46, 51, 53, 57, 60, 65
+  # dsend 0.5 # rsend 0.5
+  # dur 0.1 # amp 0.2
+  # adsr' 0.001 0.15 0.01 0.2
+  # drive' 0.4 0.1 0.1 0.1
+
+
+d3  $ every 8 ((|+ note "<12 0 0>"))
+    $ note "[<69!15 67>, <72!15 74>]" # s "discreet3" # dur 0.8
+    # adsr' 0.1 2.5 0.5 1.5 # amp 0.06 # detune 0.99 # rsend 0.25 # dsend 0.8
+    # vib' 0.25 0.5
+    # trem' "0.25 4 8" (randosc 0.01 0.9) # modType 2
+    # drive' 0.2 0.1 0.01 0.3 # width (sinosc 0.01 0.4 0.25)
+
+hush
+
+---
+
+setcps(138/60/4)
+
+all $ (# nudge "-0.03")
+
+d1 $ metro
+
+d1 $ stack [
+  buf "<[10*4]!7 [11*16]?0.25>" # amp 0.2
+  -- buf "[~ <18!3 [19 19]>]*4" # amp 0.03 # rsend 0.8 # pan (choose [-0.75, 0.75, 0.0])
+  ]
+  # s "linn" # drive 0.7 # bias 0.1 |* amp 1 # lpfreq 3500 # lpres 0.01
+
+d1 silence
+
+do
+  let filmbass = select ("<1!16 2!16 3!16>"/3) [
+              note "46 46 46 46 46 45 45 45 45 45 45 45 45 45 45 45",
+              note "48 48 48 48 48 49 48 48 48 48 48 48 49 48 48 49",
+              note "39 51 50 50 <39 47> 51 50 50 39 51 50 50 39 51 50 50"
+              ]
+            # s "filmbassNuevo" |+ note "-12 0"
+            # amp 0.9
+            # detune (randosc 0.97 1.03)
+            # adsr' (triosc 0.001 0.1 0.25) 0.1 0.4 0.1
+            # drive' 0.7 0.3 0.3 0.4
+            # dur 0.02
+            # feedback "2.2 0.8 <1.6 3.4> 2.8" |* feedback 0.25
+            # width (sinosc 0.001 0.2 0.25) # drive' 0.8 0.3 0.1 0.1
+            # lpfreq (sawosc 6500 600 0.125)-- (slow 3 $ range 3500 6500 saw)
+            # lpres (sinosc 0.4 0.85 0.125)
+      filmdiscreet = slow 4
+            $ select ("<1!16 2!16>"/2) [
+                struct ("<t(3, 8, 0) t(5, 8, 0)>")
+                $ note "<[74, 77]!2 [74, 76]!2>"
+                , struct "t(2, 8, 0)"
+                $ note "<[79, 77]!4 [69, 74, 83]!4 [79, 77]!4 [71, 74, 81]!4 >"
+                # vib' 2 0.5 # trem' 2 0.2
+                ] # amp 0.03
+            # s "discreet3"
+            # detune "0.99 1.01 1.005"
+            # adsr' 0.1 0.2 0.4 0.5
+            # rsend 1.4 # dsend 1.5
+            # lpf' 3500 0.4
+  d3 $ filmdiscreet
+  d5 $ filmbass
+
+hush
+
+d3 silence
+
+d4 silence
+-- ayuda memoria:
+-- usar open stage control
+
+d1 $ metro
+
+all $ (#nudge "-0.04")
+
+hush
+
+setcps(133/60/4)
+
+hush
+
+d2 $ struct "t*8"
+  $ note ((run 40) + "<40 50>") # s "fm1"
+  # dsend 0.75 # rsend 0.5
+  # dur 0.1
+  # adsr' 0.01 0.1 0.1 1.1
+
+
+hush
+--- atajos
+-- gracias a https://www.youtube.com/watch?v=oJSWNKUqgmM&t=1258s
+
+
+
+
+
+--- osciladores
+
+
+
+
+setcps(180/60/4)
+
+-- probando
+
+let footworks = [
+      -- thank you geikha https://www.youtube.com/watch?v=oJSWNKUqgmM
+      "t ~ ~ ~ t ~ ~ ~ t ~ ~ ~ t ~ ~ ~",
+      "t ~ t ~ t ~ ~ ~ t t ~ ~ t ~ ~ t",
+      "t(11,16)",
+      "t(5,8, 2)",
+      "t(9, 16, 3)"
+      ]
+    closedhatpat = [
+          "~ ~ t ~ ~ ~ t ~ ~ ~ t ~ ~ ~ t ~",
+          "t t t t t t t t t t t t t t t t",
+          "t t t ~ t t ~ ~ t t t t t t ~ t",
+          "~ t t t t t t ~ <t ~ t> t <t ~ ~> t t t ~ t"
+          ]
+    -- fromIntegral: Int to Float
+    foot p = select (p|/(fromIntegral(length footworks))) footworks
+    kick n b sample a = struct(foot n) $ buf b # s sample # amp a
+    hat p = select (p|/fromIntegral(length closedhatpat)) closedhatpat
+    clhat n b sample a = struct(hat n) $ buf b # s sample # amp a
+
+do
+  -- inst, pattern, buffer, samplename, amp
+  let kick1 = kick 1 3 "datakick" 0.1
+      kick2 = kick 3 "11 13 13 13" "datakick" 0.3
+      kick3 = kick "<1 2> <3 3 4> 5" (run "<13 15 5>") "datakick" 0.2
+      drums = stack [
+          kick 2 10 "datakick" 0.2 # atk 0.01,
+          clhat 1 2 "datach" 0.2
+          # lpf' (sinosc 5500 9500 0.25) 0.87
+          # dsend 0.01 |* amp 0.7 # adsr' 0.02 0.2 0.1 0.2
+        ] # humanize
+        # drive' 0.2 0.1 0.2 0.1
+        # lpf' 8500 0.3
+  -- d1 $ drums
+  -- h1 $ kick1 # n ((run 4) + 1) # nudge 0.1
+  d1 $ drums # n ((run 4) + 10)
+  -- h1 $ drums # n (run 4 + 1) # nudge 0.1
+  -- h2 $ clhat 1 2 "datach" 0.2 # n((run 4) + 1) # nudge 0.1
+
+d2 silence
+
+h1 silence
+h2 silence
+
+do
+  -- inst, pattern, buffer, samplename, amp
+  let celesta n b sample a = struct n $ buf b # s sample # amp a # humanize
+  let cel = slow 4 $ sometimes (jux (# buf "<50 40 60>"))
+            $ celesta "t*8?0.85" "<<69 72 70>!16 60!8>" "dk2celesta" 0.3
+            # adsr' 0.002 0.25 0.1 0.01 # rsend 0.5 # dsend 1.5
+  d3 $ cel
+
+
+do
+  let randdk = sometimes (plyWith "<2 4>" ((|* amp 0.95)) . (|* rate 3) . (# dsend 0.5))
+              $ struct "t*4"
+              $ buf (randosc 20 94) # s "dk2standardkit" # amp 0.5 # rate 1 # humanize
+  d1 $ randdk
+  -- h1  $ randdk
+
+hush
+
+
+
+do
+  let kpat = [
+          "t ~ ~ ~ t ~ ~ ~ t ~ ~ ~ t ~ ~ ~",
+          "t t ~ ~ ~ ~ t t ~ ~ ~ ~ ~ <~ t t> ~ <~ t>"
+          ]
+      snpat =  [
+          "~ ~ ~ ~ t ~ ~ ~ ~ ~ ~ ~ t ~ ~ ~",
+          "~ << ~ t> ~ ~ ~> ~ ~ t ~ ~ ~ ~ t ~ ~ t ~ <~ ~ ~ t> <~ ~ ~ t>"
+          ]
+      ridpat = "t ~ t ~ t ~ t ~ t ~ t ~ t ~ t ~"
+      adsr = adsr' 0.009 0.4 0.4 0.4
+      kicksel p = select (p|/(fromIntegral(length kpat))) kpat
+      kick n = struct(kicksel n) $ buf 8 # s "dk2lava" # amp 0.2
+          # rate (1/2) # adsr # drive' 0.1 0.01 0.01 0.05
+      snare n = struct (sel snpat n) $ buf 12 # s "dk2lava" # amp 0.14 # rate (1/2) # adsr
+      ride = struct ridpat $ buf "<7!4 11!4>" # s "dk2lava" # amp 0.02 # rate (1/2) # adsr
+      tamb b a p r = s "tambourine" # buf b # amp a # pan p
+                  # adsr' 0.09 0.1 0.1 0.1 # rsend r
+      tambourines = stack [
+          struct "t(7, 16)" $ tamb 8 "{1.0 0.5 1.0}%16" "-1.0" 0.01,
+          struct "t(7, 16, 2)" $ tamb 2 "{0.5 1.0 0.8}%16" "1.0" 0.01
+          ]  # lpf' 7000 0.1
+  d1  $ stack [
+        kick "<1 1 1 2>",
+        -- snare "<1 2>" # rsend 0.9,
+        mute $ ride # rsend 0.2,
+        mute $ tambourines # amp 0.01 # rate 0.5
+      ] |* amp 5
+
+hush
+
+d1 silence
+
+do
+  -- inst, pattern, buffer, samplename, amp
+  let basspat = [
+              "t t ~ t t ~ t <~ t> t t ~ t t ~ t <~ t>",
+              "t ~ ~ ~ t ~ ~ ~ t ~ ~ ~ t ~ ~ ~"
+              ]
+      bass n b = struct(sel basspat n) $ buf b # s "dk2basspick"
+                # amp 0.8
+                # humanize # dur 0.15
+                # adsr' 0.03 0.1 0.8 0.2
+  d2 -- $ every 3 (|+ buf 7)
+    $ bass "<2 2 2 1>" "<45 40 45 45 45 40 45 [47 47 48 48]>"
+
+d3 silence
+
+d3  $ every 4 (|+ note "<12 0 0>")
+    $ note "[<62 72>, <67 65>, <69 64>, <74 55>]" # s "discreet3" # dur 0.5
+    # adsr' 0.1 2.5 0.5 1.5 # amp 0.1 # detune 0.99 # rsend 0.25 # dsend 0.8
+    # vib' 0.25 0.2
+    # trem' "0.25 4 8" (randosc 0.01 0.9) # modType 2
+    # drive' 0.2 0.1 0.01 0.3 # width (sinosc 0.01 0.4 0.25)
+
+
+d1 silence
+d4 silence
+
+hush
+
+do
+  -- inst, pattern, buffer, samplename, amp
+  let kick1 = kick 1 3 "datakick" 0.1
+      kick2 = kick 3 "11 13 13 13" "datakick" 0.3
+      kick3 = kick "<1 2> <3 3 4> 5" (run "<13 15 5>") "datakick" 0.2
+  d1 $ stack [
+      kick1 # atk 0.01,
+      ch 2 ((run 24) * 2) "<datach datach>" "{0.1 0.01 0.07}%16"
+      # lpf' (sinosc 5500 9500 0.25) 0.87
+      # dsend 0.01 |* amp 0.7 # adsr' 0.02 0.2 0.1 0.2
+    ]
+    # drive' 0.2 0.1 0.2 0.1
+    # lpf' 8500 0.3
+
+d2 -- $ note "62" # s "discreet3" # amp 0.05
+  $ slow 2 $ rarely ((|+ note (choose [12, 19, 24])) . (|* rel 2))
+  $ (fast "<4 2 4> <2 4 2>")
+  $ inst' "<69!3 74> 65 62" "discreet3" 0.05
+  # dur 0.125
+  |- note (choose [0, 7, 9, 12])
+  # adsr' 0.1 0.1 0.1 "<0.25 0.5 1.5>"
+  # lpf' (sawosc 550 3250 0.5)
+  (randosc 0.7 0.95)
+  # drive' 0.7 0.01 0.01 0.4
+  # trem' 4 0.1
+  # vib' 2 0.9
+  # modType 4
+  # dsend 1.0
+
+
+
+
+hush
+
+--gracias <3
+
+-- tidal para ndefs
+
+-- targetModular: Para controlar Ndefs.
+let targetModular = Target {
+            oName = "modular",   -- A friendly name for the target (only used in error messages)
+            oAddress = "localhost", -- The target's network address, normally "localhost"
+            oPort = 8080,           -- The network port the target is listening on
+            oLatency = 0.02,         -- Additional delay, to smooth out network jitter/get things in sync
+            oSchedule = Live,       -- The scheduling method - see below
+            oWindow = Nothing,      -- Not yet used
+            oHandshake = False,     -- SuperDirt specific
+            oBusPort = Nothing      -- Also SuperDirt specific
+          }
+    oscModular = OSC "/tidalModular" Named {requiredArgs = ["ndef"]}
+    amp = pF "amp"
+    arp = pF "arp"
+    atk = pF "atk"
+    atklpg = pF "atklpg"
+    bias = pF "bias"
+    buf = pF "buf"
+    curve = pF "curve"
+    decay = pF "decay"
+    decaylpg = pF "decaylpg"
+    delayfb = pF "delayfb"
+    detune = pF "detune"
+    drive = pF "drive"
+    dsend = pF "dsend"
+    dur = pF "dur"
+    fbdelay = pF "fbdelay"
+    freq = pF "freq"
+    feedback = pF "feedback"
+    firstharm = pF "firstharm"
+    formantfreq = pF "formantfreq"
+    flutter = pF "flutter"
+    flutterdepth = pF "flutterdepth"
+    freqmod = pF "freqmod"
+    glide = pF "glide"
+    grow = pF "grow"
+    high = pF "high"
+    hpfreq = pF "hpfreq"
+    lpgres = pF "lpgres"
+    low = pF "low"
+    lpfreq = pF "lpfreq"
+    lpres = pF "lpres"
+    modType = pI "modType"
+    nSynths = pI "nSynths"
+    mnote = pF "mnote"
+    ndef = pS "ndef"
+    octmod = pF "octmod"
+    off = pF "off"
+    osc1 = pF "osc1"
+    osc2 = pF "osc2"
+    ratio = pF "ratio"
+    rel = pF "rel"
+    rellpg = pF "rellpg"
+    rsend = pF "rsend"
+    saturation = pF "saturation"
+    shape = pF "shape"
+    sus = pF "sus"
+    suslpg = pF "suslpg"
+    t_gate = pF "t_gate"
+    tremolorate = pF "tremolorate"
+    tremolodepth = pF "tremolodepth"
+    trim = pF "trim"
+    vibratodepth = pF "vibratodepth"
+    vibratorate = pF "vibratorate"
+    width = pF "width"
+    oscmapModular = [(targetModular, [oscModular])]
+
+streamModular <- startStream defaultConfig oscmapModular
+
+n1 = streamReplace streamModular 1
+
+hush
+
+let
+  inst' n sy a = note n # s sy # amp a
+  adsrlpg' a d s r = atklpg a # decaylpg d # suslpg s # rellpg r
+  drive' d b l h = drive d # bias b # low l # high h
+  lpf' f r = lpfreq f # lpres r
+  trem' rate depth = tremolorate rate # tremolodepth depth
+  vib' r d = vibratorate r # vibratodepth d
+
+n1 $ slow 1
+  $ jux (|+ note "[7, 12]")
+  $ note "64 60 65 69 <74!4 72!4> 60 71 69 64 60 62 69 64 60 62 69"
+  # amp (sawosc 0.3 0.6 0.25) # detune 1.01
+  # pan (sinosc "-0.5" 0.5 0.5)
+  # ndef "ndef1"
+  |- note "24"
+  # dur 0.01 # width (sinosc 0.01 0.99 0.125)
+  # adsr' 0.03 0.2 0.1 0.1
+  # adsrlpg' 0.001 0.4 0.8 0.1
+  # drive' 0.8 0.2 0.2 0.1
+  # t_gate 1
+  # glide (randosc 0.01 0.1)
+
+n1 silence
+
+n1 $ note "62" # ndef "ndef1" # t_gate 1
+  # adsr' 2.5 1.5 0.4 1.5 # dur 8
+
+hush
+
+
+------------------
+let
+  inst' n sy a = note n # s sy # amp a
+  -- adsrlpg' a d s r = atklpg a # decaylpg d # suslpg s # rellpg r
+  drive' d b l h = drive d # bias b # low l # high h
+  lpf' f r = lpfreq f # lpres r
+  trem' rate depth = tremolorate rate # tremolodepth depth
+  vib' r d = vibratorate r # vibratodepth d
+
+
+hush
+
+setcps(110/60/4)
+
+do
+  let tamb b a p r = s "tambourine" # buf b # amp a # pan p
+                  # adsr' 0.09 0.01 0.3 0.1 # rsend r
+      tambourines = stack [
+          struct "t(9, 16)" $ tamb 8 "{1.0 0.5 1.0}%16" "-1.0" 0.5,
+          struct "t(9, 16, 2)" $ tamb 2 "{0.5 1.0 0.8}%16" "1.0" 0.5
+          ]  # lpf' 7000 0.1
+
+d1 $ stack [
+    -- kick1,
+    tambourines |* amp 0.5
+    ]

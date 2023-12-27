@@ -1,0 +1,347 @@
+qsort [] = []
+qsort (x:xs) = qsort ys ++ [x] ++ qsort zs
+              where
+                 ys = [a | a <- xs, a <= x]
+                 zs = [b | b <- xs, b > x]
+
+
+qsort [5, 9, 1, 2]
+
+reverse [1..10]
+
+
+qsort (reverse[1..10])
+
+qsort "holi"
+
+qsort [True, False, True, False]
+
+False < True
+
+-- clase 4 https://www.youtube.com/watch?v=YtZIKujkSmU&t=11s
+:type qsort
+-- qsort :: Ord a => [a] -> [a]
+
+--- calculator
+2 + 3 * 4 - 2  * 6
+sqrt(5)
+
+
+--------------------------------------
+--------------------------------------
+-- basics for lists
+lista = [1, 2, 3, 4, 5]
+head lista -- select first element of list
+tail lista -- remove first element of list
+lista !! 2 -- select nth element of a list
+take 3 lista -- select first n element of list
+drop 3 lista -- remove the first n elements from a list
+length lista
+sum lista
+sum [] -- da 0. por identidad aditiva
+product lista
+product [] -- da 1, por identidad multiplicativa
+[1, 2, 3] ++ [4, 5] -- append two lists
+reverse lista
+
+-------------------------------------------
+-------------------------------------------
+-- **function application**
+-- in haskell, function application is denoted using space, and multiplication is denoted using *
+-- f a b + c*d
+-- is like in maths $$ f(a,b) + cd $$
+-- beware, that f a + b, means $$ f(a) + b $$
+
+-- examples
+
+--  maths   |   haskell
+--  f(x)         f x
+-- f(x,y)       f x y
+-- f(g(x))     f (g x)
+--f(x, g(y))   f x (g y)
+-- f(x)g(y)    f x * g y
+
+
+-- haskell scripts are .hs files. Not mandatory, but useful for identification.
+
+
+-- examples
+double x = x + x
+
+quadruple x = double (double x)
+
+quadruple 5
+
+take (double 2) [1, 2, 3, 4, 5, 6]
+
+factorial n = product [1..n]
+
+average ns = sum ns `div` length ns
+
+average [2, 8, 9]
+
+
+----------------------
+-- naming requirements
+-- funcs names must begin with lower-case
+myFun, fun1, arg_2, x'
+
+-- by convention, list arguments have an s suffix on their name, for example:
+
+xs, ns, nss
+
+-- layot rule avoids the need for explicit syntax to indicate the grouping of definition
+
+a = b + c
+    where
+      b = 1
+      c = 2
+d = a * 2
+
+-- is the implicit grouping, where
+
+a = b + c
+    where
+      {b=1;
+      c = 2}
+d = a * 2
+
+-- is the explicit grouping
+
+
+-- exercise
+
+n = a `div` length xs
+    where
+      a = 10
+      xs = [1, 2, 3, 4, 5]
+
+n
+
+
+--- exercise
+-- show how the library function last that selects the last element of a list can be defined using the functions introduced in this lecture
+
+last [1, 2, 3, 4, 5]
+
+xs = [1, 2, 3, 4, 5]
+
+head (reverse xs)
+
+xs !! (length xs - 1)
+
+-- similarly show how the library function init that removes the last element from a list can be defined in two different ways.
+init xs
+
+take (length xs - 1) xs
+reverse (tail (reverse xs))
+
+----------------------------------------------
+----------------------------------------------
+--- Chapter 3 - Types and Classes
+-- https://www.youtube.com/watch?v=uBEPFkuPrcU
+
+e :: t -- expresion e has type t
+
+not False
+
+:type not False -- (not False :: Bool)
+
+-- Basic Types
+Bool
+Char
+String
+Int
+Float
+
+-- List Types
+
+[False, True, False] :: [Bool]
+['a', 'b', 'c', 'd'] :: [Char]
+
+-- In general: [t] is the type of lists with elements of type t.
+
+-- the type of a list says nothing about its length
+-- the type of the elements is unrestricted. For example, we can have lists of lists:
+
+[['a'], ['b', 'c']] :: [[Char]]
+
+['b', 'c'] == "bc" -- True
+
+-- Tuple Types
+-- a tuple is a sequence of values of different types
+
+(False, True)
+(False, "a", True)
+
+-- the type of the components is unrestricted
+
+('a', (False, 'b'))
+
+[4, 'a'] -- error
+(4, 'a')
+
+
+-------------------------
+-- function types
+
+-- a function is a mapping from values of one type to values of another type.
+
+not :: Bool -> Bool
+
+even :: Int -> Bool
+
+-- in general
+
+t1 -> t2 -- is the type of functions that map values of type t1 to values to type t2
+
+-- argument and result types are unrestricted.
+
+add :: (Int, Int) -> Int
+add (x, y) = x + y
+
+zeroto :: Int -> [Int]
+zeroto n = [0..n]
+
+-- Curried functions (Haskell Curry)
+-- functions with multiple arguments are also possible by returning functions as results.
+
+add' :: Int -> (Int -> Int)
+add' x y = x + y
+
+-- add' takes an integer x and returns a function add' x. In turn, this function takes an integer y and returns the result x + y
+
+add' 1 2 3
+
+--- functions with more than two arguments can be curried by returning nested functions
+
+mult :: Int -> (Int -> (Int -> Int))
+mult x y z = x * y * z
+
+mult 2 4 5
+
+--- curried functions are more flexible than funcions on tuples, because useful functions can often be made by partially appliyng a curried function
+
+-- currying conventions
+
+Int -> Int -> Int -> Int -- means Int -> (Int -> (Int -> Int))
+
+mult x y z -- means ((mult x) y ) z
+
+
+-- polymorphic functions
+
+length :: [a] -> Int
+
+-- most functions are polymorphic
+
+fst :: (a, b) -> a -- first
+
+head :: [a] -> a
+
+take :: Int -> [a] -> [a]
+
+zip :: [a] -> [b] -> [(a, b)]
+
+id :: a -> a
+
+lista1 = [1, 2, 3]
+lista2 = [5, 6, 7]
+
+zip lista1 lista2
+
+
+-- overloaded functions
+-- a polymorphic function is called overloaded if its type contains one or more class constraints
+
+(+) :: Num a => a -> a -> a
+-- for any numeric type a, the (+) takes two values of type a, and returns a value type a.
+-- a could be int or float.
+
+---------------------------
+-- Classes
+
+Num -- numeric types
+Eq -- Equality types
+Ord -- ordered types
+
+-- for example
+
+(+) :: Num a => a -> a -> a
+(==) :: Eq a => a -> a -> Bool
+(<) :: Ord a => a -> a -> Bool
+
+
+-- Tips
+
+-- when defining a new function, it is useful to begin by writing down its type;
+-- within a script, it is good practice to state the type of every new function defined;
+-- when stating the types of polymorphic functions that use numbers, equality or orderings, take care to include the necessary class constraints.
+
+:type [tail, init, reverse]
+
+second :: [a] -> a
+
+second xs = head (tail xs)
+
+second [1, 2, 3, 4]
+
+tail [1, 2, 3, 4]
+
+swap :: (a, b) -> (b, a)
+swap (x, y) = (y, x)
+
+swap (2, 5)
+
+
+--------------------------------------
+--- conditional expressions
+
+abs :: Int -> Int
+abs n = if n >= 0 then n else -n
+
+-- can be nested
+
+signum :: Int -> Int
+signum n = if n < 0 then -1 else
+              if n == 0 then 0 else 1
+-- else must always be there
+
+-- guarded equations
+-- can be written as piecewise functions
+
+abs n | n >= 0    = n
+      | otherwise = -n
+
+
+signum n | n < 0 = -1
+         | n == 0 = 0
+         | otherwise = 1
+
+
+-- Pattern Matching
+
+not :: Bool -> Bool
+not False = True
+not True = False
+
+-- functions can often be defined in many different ways using pattern matching. For example
+
+(&&) :: Bool -> Bool -> Bool
+True && True = True
+True && False = False
+False && True = False
+False && False = False
+
+-- can be defined more compactly by
+
+True && True = True
+_    && _    = False  -- _ is a wildcard pattern that matches any argument value
+
+-- however, is defined using
+
+True && b = b
+False && _ = False
+
+
+True && 13

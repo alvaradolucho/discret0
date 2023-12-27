@@ -1,0 +1,185 @@
+:{
+let target = Target {
+            oName = "visualiser",   -- A friendly name for the target (only used in error messages)
+            oAddress = "localhost", -- The target's network address, normally "localhost"
+            oPort = 8080,           -- The network port the target is listening on
+            oLatency = 0.02,         -- Additional delay, to smooth out network jitter/get things in sync
+            oSchedule = Live,       -- The scheduling method - see below
+            oWindow = Nothing,      -- Not yet used
+            oHandshake = False,     -- SuperDirt specific
+            oBusPort = Nothing      -- Also SuperDirt specific
+          }
+    alink =
+     Target {oName = "abletonlink",   -- A friendly name for the target (only used in error messages)
+             oAddress = "localhost", -- The target's network address, normally "localhost"
+             oPort = 17000,           -- The network port the target is listening on
+             oLatency = 0.3,         -- Additional delay, to smooth out network jitter/get things in sync
+             oSchedule = Live,       -- The scheduling method - see below
+             oWindow = Nothing,      -- Not yet used
+             oHandshake = False,     -- SuperDirt specific
+             oBusPort = Nothing      -- Also SuperDirt specific
+            }
+    targetHydra =
+      Target {
+              oName = "hydra",
+              oAddress = "localhost", -- The target's network address, normally "localhost"
+              oPort = 57101,           -- The network port the target is listening on
+              oLatency = 0.2,         -- Additional delay, to smooth out network jitter/get things in sync
+              oSchedule = Live,       -- The scheduling method - see below
+              oWindow = Nothing,      -- Not yet used
+              oHandshake = False,     -- SuperDirt specific
+              oBusPort = Nothing
+             }
+    oscplay = OSC "/tidalcycles" Named {requiredArgs = ["s"]}
+    oscHydraplay = OSC "/hydra" Named {requiredArgs = ["s"]}
+    oscalink = OSC "/alink" Named {requiredArgs = ["s"]}
+    amp = pF "amp"
+    ampmoddepth = pF "ampmoddepth"
+    ampmodfreq = pF "ampmodfreq"
+    attenuation = pF "attenuation"
+    arp = pF "arp"
+    atk = pF "atk"
+    atklpg = pF "atklpg"
+    bias = pF "bias"
+    buf = pF "buf"
+    buff = pF "buff"
+    cQuantum = 4
+    curve = pF "curve"
+    decay = pF "decay"
+    delayfb = pF "delayfb"
+    detune = pF "detune"
+    drive = pF "drive"
+    dsend = pF "dsend"
+    dur = pF "dur"
+    fbdelay = pF "fbdelay"
+    freq = pF "freq"
+    feedback = pF "feedback"
+    firstharm = pF "firstharm"
+    formantfreq = pF "formantfreq"
+    flutter = pF "flutter"
+    flutterdepth = pF "flutterdepth"
+    freqmod = pF "freqmod"
+    grow = pF "grow"
+    high = pF "high"
+    hpfreq = pF "hpfreq"
+    lpgres = pF "lpgres"
+    low = pF "low"
+    lpfreq = pF "lpfreq"
+    lpres = pF "lpres"
+    modType = pI "modType"
+    nSynths = pI "nSynths"
+    mnote = pF "mnote"
+    octmod = pF "octmod"
+    off = pF "off"
+    osc1 = pF "osc1"
+    osc2 = pF "osc2"
+    ratio = pF "ratio"
+    rel = pF "rel"
+    rsend = pF "rsend"
+    saturation = pF "saturation"
+    shape = pF "shape"
+    tremolofreq = pF "tremolofreq"
+    tremolorate = pF "tremolorate"
+    tremolodepth = pF "tremolodepth"
+    trim = pF "trim"
+    vibratodepth = pF "vibratodepth"
+    vibratofreq = pF "vibratofreq"
+    vibratorate = pF "vibratorate"
+    width = pF "width"
+    oscmap = [(target, [oscplay]), (targetHydra, [oscHydraplay] )]
+    osclink = [(alink, [oscalink])]
+    oscHydramap = [(targetHydra, [oscHydraplay])]
+:}
+
+:{
+  stream <- startStream defaultConfig oscmap
+:}
+
+:{
+    streamlink <- startStream defaultConfig osclink
+:}
+
+:{
+    streamHydra <- startStream defaultConfig oscHydramap
+:}
+
+:{
+let p = streamReplace stream
+    hush = streamHush stream
+    list = streamList stream
+    mute = streamMute stream
+    unmute = streamUnmute stream
+    solo = streamSolo stream
+    unsolo = streamUnsolo stream
+    once = streamOnce stream
+    first = streamFirst stream
+    asap = once
+    nudgeAll = streamNudgeAll stream
+    all = streamAll stream
+    resetCycles = streamResetCycles stream
+    setcps = asap . cps
+    xfade i = transition stream True (Sound.Tidal.Transition.xfadeIn 4) i
+    xfadeIn i t = transition stream True (Sound.Tidal.Transition.xfadeIn t) i
+    histpan i t = transition stream True (Sound.Tidal.Transition.histpan t) i
+    wait i t = transition stream True (Sound.Tidal.Transition.wait t) i
+    waitT i f t = transition stream True (Sound.Tidal.Transition.waitT f t) i
+    jump i = transition stream True (Sound.Tidal.Transition.jump) i
+    jumpIn i t = transition stream True (Sound.Tidal.Transition.jumpIn t) i
+    jumpIn' i t = transition stream True (Sound.Tidal.Transition.jumpIn' t) i
+    jumpMod i t = transition stream True (Sound.Tidal.Transition.jumpMod t) i
+    mortal i lifespan release = transition stream True (Sound.Tidal.Transition.mortal lifespan release) i
+    interpolate i = transition stream True (Sound.Tidal.Transition.interpolate) i
+    interpolateIn i t = transition stream True (Sound.Tidal.Transition.interpolateIn t) i
+    clutch i = transition stream True (Sound.Tidal.Transition.clutch) i
+    clutchIn i t = transition stream True (Sound.Tidal.Transition.clutchIn t) i
+    anticipate i = transition stream True (Sound.Tidal.Transition.anticipate) i
+    anticipateIn i t = transition stream True (Sound.Tidal.Transition.anticipateIn t) i
+    forId i t = transition stream False (Sound.Tidal.Transition.mortalOverlay t) i
+    d1 = p 1 . (|< orbit 0) . (# n ((run 4) + 1))
+    d2 = p 2 . (|< orbit 1)
+    d3 = p 3 . (|< orbit 2)
+    d4 = p 4 . (|< orbit 3)
+    d5 = p 5 . (|< orbit 4)
+    d6 = p 6 . (|< orbit 5)
+    d7 = p 7 . (|< orbit 6)
+    d8 = p 8 . (|< orbit 7)
+    d9 = p 9 . (|< orbit 8)
+    d10 = p 10 . (|< orbit 9)
+    d11 = p 11 . (|< orbit 10)
+    d12 = p 12 . (|< orbit 11)
+    d13 = p 13
+    d14 = p 14
+    d15 = p 15
+    d16 = p 16
+    -- xh1 = streamReplace streamHydra 1 . (# n ((run 4) + 1))
+    -- h2 = streamReplace streamHydra 2
+    -- h3 = streamReplace streamHydra 3
+:}
+
+-- funciones mejoradas
+:{
+  let mute p = (degradeBy 1) $ p
+      sinosc min max freq = (fast freq $ range min max sine)
+      triosc min max freq = (fast freq $ range min max tri)
+      sqrosc min max freq = (fast freq $ range min max square)
+      sawosc min max freq = (fast freq $ range min max saw)
+      randosc min max = (range min max rand)
+      inst' n sy a = note n # s sy # amp a
+      adsr' a d s r = atk a # decay d # sus s # rel r
+      drive' d b l h = drive d # bias b # low l # high h
+      lpf' f r = lpfreq f # lpres r
+      trem' rate depth = tremolorate rate # tremolodepth depth
+      vib' r d = vibratorate r # vibratodepth d
+      humanize = nudge (randosc "-0.001" 0.01)
+      sel pat p = select(p|/(fromIntegral(length pat))) pat
+:}
+
+-- patrones usuales
+:{
+  let metro = buf "0 1 1 1" # s "datakick" # amp 0.2
+:}
+
+
+:{
+  putStrLn "tidal listo"
+:}

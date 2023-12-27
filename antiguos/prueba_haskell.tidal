@@ -1,0 +1,137 @@
+qsort [] = []
+qsort (x:xs) = qsort ys ++ [x] ++ qsort zs
+              where
+                 ys = [a | a <- xs, a <= x]
+                 zs = [b | b <- xs, b > x]
+
+
+qsort [5, 9, 1, 2]
+
+reverse [1..10]
+
+
+qsort (reverse[1..10])
+
+qsort "holi"
+
+qsort [True, False, True, False]
+
+False < True
+
+-- clase 4 https://www.youtube.com/watch?v=YtZIKujkSmU&t=11s
+:type qsort
+-- qsort :: Ord a => [a] -> [a]
+
+--- calculator
+2 + 3 * 4 - 2  * 6
+sqrt(5)
+
+
+--------------------------------------
+--------------------------------------
+-- basics for lists
+lista = [1, 2, 3, 4, 5]
+head lista -- select first element of list
+tail lista -- remove first element of list
+lista !! 2 -- select nth element of a list
+take 3 lista -- select first n element of list
+drop 3 lista -- remove the first n elements from a list
+length lista
+sum lista
+sum [] -- da 0. por identidad aditiva
+product lista
+product [] -- da 1, por identidad multiplicativa
+[1, 2, 3] ++ [4, 5] -- append two lists
+reverse lista
+
+-------------------------------------------
+-------------------------------------------
+-- **function application**
+-- in haskell, function application is denoted using space, and multiplication is denoted using *
+-- f a b + c*d
+-- is like in maths $$ f(a,b) + cd $$
+-- beware, that f a + b, means $$ f(a) + b $$
+
+-- examples
+
+--  maths   |   haskell
+--  f(x)         f x
+-- f(x,y)       f x y
+-- f(g(x))     f (g x)
+--f(x, g(y))   f x (g y)
+-- f(x)g(y)    f x * g y
+
+
+-- haskell scripts are .hs files. Not mandatory, but useful for identification.
+
+
+-- examples
+double x = x + x
+
+quadruple x = double (double x)
+
+quadruple 5
+
+take (double 2) [1, 2, 3, 4, 5, 6]
+
+factorial n = product [1..n]
+
+average ns = sum ns `div` length ns
+
+average [2, 8, 9]
+
+
+----------------------
+-- naming requirements
+-- funcs names must begin with lower-case
+myFun, fun1, arg_2, x'
+
+-- by convention, list arguments have an s suffix on their name, for example:
+
+xs, ns, nss
+
+-- layot rule avoids the need for explicit syntax to indicate the grouping of definition
+
+a = b + c
+    where
+      b = 1
+      c = 2
+d = a * 2
+
+-- is the implicit grouping, where
+
+a = b + c
+    where
+      {b=1;
+      c = 2}
+d = a * 2
+
+-- is the explicit grouping
+
+
+-- exercise
+
+n = a `div` length xs
+    where
+      a = 10
+      xs = [1, 2, 3, 4, 5]
+
+n
+
+
+--- exercise
+-- show how the library function last that selects the last element of a list can be defined using the functions introduced in this lecture
+
+last [1, 2, 3, 4, 5]
+
+xs = [1, 2, 3, 4, 5]
+
+head (reverse xs)
+
+xs !! (length xs - 1)
+
+-- similarly show how the library function init that removes the last element from a list can be defined in two different ways.
+init xs
+
+take (length xs - 1) xs
+reverse (tail (reverse xs))

@@ -1,13 +1,13 @@
 (
 // buffers
-var filePath, samplesPath;
+var filePath, thisPath, samplesPath;
 var inst, instruments;
 Buffer.freeAll;
 
-
-filePath = "C:/Users/Lucho Alvarado/Documents/automat4/dev/automat4_set_dev4_2024/";
-filePath.postln;
-samplesPath = filePath ++ "samples/samples";
+//File.getcwd|
+//filePath = "C:/Users/Lucho Alvarado/Documents/automat4/dev/automat4_set_dev4_2024/";
+filePath = thisProcess.nowExecutingPath.dirname.dirname;
+samplesPath = filePath ++ "/samples/samples";
 //samplesPath = filePath ++ "samplestest/";
 filePath = PathName.new(filePath);
 samplesPath = PathName.new(samplesPath);
@@ -22,7 +22,10 @@ samplesPath.entries.do({ | i |
 	b.add(folder -> []);
 	//i.entries.postln;
 	i.entries.do({ |j|
-		if (j.fileName.endsWith(".wav").or(j.fileName.endsWith(".WAV").or(j.fileName.endsWith(".aif").or(j.fileName.endsWith(".flac")))), {
+		if (j.fileName.endsWith(".wav").or(
+			j.fileName.endsWith(".WAV").or(
+				j.fileName.endsWith(".aif").or(
+					j.fileName.endsWith(".flac")))), {
 			var buf = b[folder].size;
 			b[folder] = b[folder].add(
 				Buffer.readChannel(s, j.fullPath, channels:[0])

@@ -4,11 +4,8 @@ var filePath, thisPath, samplesPath;
 var inst, instruments;
 Buffer.freeAll;
 
-//File.getcwd|
-//filePath = "C:/Users/Lucho Alvarado/Documents/automat4/dev/automat4_set_dev4_2024/";
 filePath = thisProcess.nowExecutingPath.dirname.dirname;
 samplesPath = filePath ++ "/samples/samples";
-//samplesPath = filePath ++ "samplestest/";
 filePath = PathName.new(filePath);
 samplesPath = PathName.new(samplesPath);
 

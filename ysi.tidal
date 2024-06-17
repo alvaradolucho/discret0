@@ -1,0 +1,595 @@
+bpm 140
+
+d1 $ fast 1 $ sometimes (off  (1/32) (|* amp 0.9)) $ sometimes (off  (1/32) (|* amp 0.9)) $ stack [
+  -- struct "t ~ t ~" $ s "808bd" # buf 1 # drive' 0.5 0.1 0.1 0.1 10 amp 0.1
+  -- , degrade $ struct "~ t ~ t ~ t ~ <t [t ~]>" $ s "808oh" |+ buf "2 4 2 4 8 6 8 6" # amp 0.03 |+ rsend (randosc 0.01 0.8)
+  slow 2 $  struct "t*8" $ buf (7) # s "amencutup" # amp 0.3 # adsr' 0.01 0.1 0.5 0.1 # rate 0.8,
+  struct "~ t ~ t ~ t ~ t" $ buf 28 # s "amencutup" # amp 0.4 # adsr' 0.01 0.1 0.5 0.1 # rate 0.8,
+   struct "t t ~ t ~ ~ t t" $ buf 29 # s "amencutup" # amp 0.7 # adsr' 0.01 0.1 0.5 0.1 # rate 0.4 # dsend 0.5
+   -- # lpfreq (randosc 300 4500) |* amp 0.9
+] -- # lpfreq (randosc 300 4500) |* amp 0.9
+|* rate (randosc 0.25 3.5) # humanize
+
+d3 $ plyWith "6 4" ((|* amp 0.9) . (|* lpfreq 0.9)) $ note "[62, 67, 65]" # s "<soft discreet2 discreet4>" # amp 0.9
+  # adsr' 0.01 0.1 0.5 0.1 |+ detune (randosc 0.99 1.01) # dur "0.125"
+  |+ note "<0 <7 5> 0 12>" |+ note "<-12 0>" |+ pan (randosc "-0.6" 0.6)
+  # lpf' (sinosc 1200 2700 0.125) 0.9 # tremolodepth 0.6 # tremolodepth 2 # vibratofreq 0.5 # vibratodepth 0.6
+  # dsend 0.9  # hpfreq 220 |* amp 0.9 # humanize
+
+hush
+
+d1 silence
+
+d1 $ stack[ struct "t t t <t t t [t t t t]>" $ buf "4" # amp 0.1,
+  struct "t(<5 [3 7] 5>, 8, <0 2>)" $ buf "6 9" # amp 0.05 # rate 1.2] # s "dmx"  # humanize
+
+
+
+
+d1 $ slow "<8 14>" $ rarely (off (1/16) (|+ note "<[7 9] [14 17]>"))
+  $ stack [
+  struct "t(<7 8 9>, 16, 0)" $ s "ola" # note 55 # pan "0.0" # detune 1.01
+ , struct "t(<7 2 5>, 14, 5)" $ s "ola" # note 64 # pan 0.0 # detune 0.99
+  ] # width (randosc 0.01 0.5)
+    # adsr' 2.5 3 0.75 5 # dur 3
+    # amp 0.1 # dsend 0.9 |+ note "-12" # rsend 0.95 # fmod "<0.1 0.5 0.8>"
+
+d2 $ slow "<12 20>" $ sometimes (off (1/128) (|+ note "<[7 9] [14 17]>"))
+  $ stack [
+  struct "t(<7 8 9>, 16, 0)" $ s "aio" # note 55 # pan "<-0.75 -0.25 0.25 0.75>" # detune 1.01
+ , struct "t(<7 2 5>, 14, 5)" $ s "aio" # note 64 # pan "<-0.75 -0.25 0.25 0.75>" # detune 0.99
+  ] # width (randosc 0.01 0.5)
+    # dur 0.5
+    # amp 0.01 # dsend 1.5 |+ note "+36" # rsend 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+bpm 100
+
+d1 $ metro
+
+d1 $ chunk "<3 4>" (fast 4)  $ struct "t(4, 16, 0)" $ s "dmx" |+| buf (choose [2, 3]) # amp 0.05
+  # adsr' 0.01 0.1 0.1 0.1 # rsend 0.2 # humanize
+
+d2  $ struct "t(4, 16)" $ s "dmx" # buf 4 # amp 0.1 # humanize
+
+d3 $ ply 4 $ struct "t(<3 3 5>, 8)" $ s "labsminipunk" # buf "[<70 60>, <65 65 75>]"
+  # amp 0.05 # humanize # adsr' 0.01 0.2 0.5 0.5 # rsend 0.5 # dsend 0.3
+
+hush
+
+
+----------------------------------------------------------------------
+----------------------------------------
+-- ambient microtonal
+-- 3 minutos
+-- mejorar timbre
+
+bpm 60
+
+d1 $ slow (choose [1, 2, 3, 1, 2, 1.5])
+  $ note "[<52 54>, <56.875 57.05 54.15>, 59.125, <33 40 42 33.125 38>]" # s "claroquesi"
+  # amp (randosc 0.01 0.1) # adsr' 5.2 2.0 0.75 7.5
+  # dur 8.5
+  |+ note "<12 0 12 7 5 -2>"
+  # drive' 0.5 0.1 0.1 0.2 # width (triosc 0.5 0.01 0.1)
+  # lpf' (sinosc 1200 4500 0.125) (triosc 0.5 0.1 0.5)
+  # ampmod' "<2 4 1.5 3 2 4 2 8 6>" (randosc 0.0001 0.5)
+  # pan (randosc "-1.0" 1.0)
+  # rsend 0.8 # dsend 0.5
+
+hush
+
+
+
+------------------------------------------------
+
+d1 $ often ( off (1/16) ((|* amp 0.95 ).(|+ note "<0 7>") ))
+  $ note "<[59, 62, 59.25] [55, 64, 52]>(<3 5>, 8)" # s "nose" # amp 0.1
+  # atk 0.01 # decay 0.1 # sus 0.1 # rel 0.2
+
+d1 $ jux rev $ sometimes (plyWith "<4 2 >" ((|*amp 0.9))) $ stack [
+  s "808bd*4" # buf 1 # amp 0.1
+  , s "~ 808oh ~ 808oh ~ 808oh ~ 808oh" # buf 1 # amp 0.1
+  ] |* amp 0.5 # rate (randosc 0.5 6.5)
+
+
+setB "print" $ "t"
+
+hush
+
+import Sound.Tidal.Chords
+
+chordList
+chordTable
+
+d1-- $ rarely (off (1/16) (|+note 7))
+  $ arpeggiate
+  -- $ qtrigger 1
+  -- $ arp "updown"
+  -- $ note "<c'major13 d'major9 f'maj7>"
+  $ note "<c'maj7'12 c'maj9'10>"
+  # s "discreet2" # adsr' 0.01 0.1 0.1 0.5
+  # pan (randosc "-0.7" 0.7)
+  |+ note 44
+  -- |+ note (choose [32, 44, 56]) # dsend 0.9
+
+once
+  $ arpeggiate
+  -- $ qtrigger 1
+  -- $ arp "updown"
+  -- $ note "<c'major13 d'major9 f'maj7>"
+  $ note "<c'maj7'12 c'maj9'10>"
+  # s "discreet2" # adsr' 0.01 0.1 0.1 0.5 # amp 0.001
+  # pan (randosc "-0.7" 0.7)
+  |+ note 44
+  -- |+ note (choose [32, 44, 56]) # dsend 0.9
+
+hush
+
+bpm 135
+
+once $ s "808bd" # buf 1 # amp 0.5 # dur 0.5 -- # adsr' 0.001 0.1 0.1 0.1
+
+d2 $ s "[~ 808sd]*2" # buf 4 # amp 0.2 # rsend 0.2 -- # dur (randosc 0.1 0.5) # rate 0.5 # amp 0.01
+
+all $ (# nudge "-0.03")
+
+all $ (off (1/16) (|* amp 0.8))
+
+
+all id
+
+
+d1 $ cat [
+  struct "t*4" $ s "808bd",
+  s "808bd*4",
+  ]
+   # buf 1 # amp 0.1
+
+hush
+
+d1 $ sometimes ( off (1/16) (|* amp 0.4) )
+  $ seqPLoop [
+  (0, 3, struct "t*4"  $ s "808bd"),
+  (3, 4, struct "t*16?0.25" $ s "808sd")
+  ] # begin (sinosc 0.001 0.0149 0.125)
+  # dur 0.5
+  # end (randosc 0.15 0.155) # rate (randosc 1.09 1.11)
+  # dur 0.001 # drive' 0.5 0.1 0.2 0.1
+  # amp 0.02 # dsend 0.1
+
+hush
+
+all $ fast 2
+
+all $ id
+
+bpm 135
+
+d1 $ loopAt 2 $ chop 4  $ s "breaks"
+  # buf 0 # amp 0.1 # dur 1
+  -- # begin 0.01 # end 1
+  # rate "1.0" # bufTempo 165
+  -- # adsr' 0.001 4 1 0.1
+
+bpm 135
+
+d1 silence
+
+d1 $ sometimes (off (1/16) (
+    (|* amp 0.9) . (|* dur 0.15))
+    )
+  $ s "808bd*1" # buf 9 # rate 1 # amp 0.5 # dur 0.25 -- # adsr' 0.001 0.1 0.1 0.1
+
+d2 $ (rarely (# rate "-1"))
+  $ s "[~ 808sd]*2" # buf 1 # amp 0.1 # rate 1
+  # rsend 0.2 -- # dur (randosc 0.1 0.5) # rate 0.5 # amp 0.01
+
+
+d3 $ degradeBy 0.7 $ sometimes ( off (1/16) (|* amp 0.5))
+  $ slow 1 $ arpeggiate
+  $ buf "<c'minor7f9'16 <c'min7sharp9'16 d'min7sharp9'16>>" |+ buf 70
+  # s "labsminipunk" # amp 0.06 # dur 0.1
+  # adsr' 0.1 2 0.5 0.5 # dsend 0.9
+
+d1 $ metro # dur 0.01
+
+hush
+
+all $ (# nudge "-0.03")
+
+----------------------
+-- muy bonicho arpegio
+
+bpm 135
+
+hush
+
+d3 $ slow 4 $ arpeggiate
+  $ buf "<c'maj7'8*4 <f'maj7'8*4 d'min7'8*4>>"
+  |+ buf "<50*4 <38 50 38 57>*4>"
+  # s "dk2piano" # amp 0.15 # dur 0.85
+  # rate (sinosc 0.98 1.01 0.25)
+  # lpf' (sinosc 1500 3500 0.125) (triosc 0.7 0.3 0.06125)
+  # hpfreq 360 # dsend 0.6
+
+d1 $ stack [
+  s "[~ ~ tambourine ~ ]*2" # buf 4 # amp 0.02 # pan "-0.7",
+  s "[~ ~ tambourine ~ ]*2" # buf 7 # amp 0.02 # pan "0.7"
+]
+
+d1 silence
+d3 silence
+
+d5 $ degradeBy 0.2 $ sometimes ( off (1/16) (|* amp 0.5))
+  $ every 4 (slow 2) $ arpeggiate
+  $ buf "<c'minor7f9'16 <c'min7sharp9'16 d'min7sharp9'16>>" |+ buf "<60!6 62 65>"
+  # s "labsminipunk" # amp 0.02 # dur 0.1
+  # adsr' 0.1 2 0.5 0.5 # dsend 0.9
+-----------------------------
+--- dank diddy
+
+d3 $ every 3 (jux rev ) $ arpeggiate
+  $ buf "<c'maj7'8*4 <f'maj7'8*4 d'min7'8*4>>"
+  |+ buf "<50*4 <38 50 38 57>*4>"
+  -- |- buf 24
+  # s "dk2guitar" # amp 0.01 # dur 0.25
+  # rate (sinosc 0.97 1.01 0.25) |* rate "0.25"
+  # lpf' (sinosc 1100 3800 0.125) (triosc 0.4 0.1 0.06125)
+  # drive' 0.8 0.3 0.01 0.25
+  # hpfreq 420 # dsend 0.6
+
+d4 $ every 8 (off (1/8) (|+ buf "<9 7 [5 14 ~ ~]>"))
+  $ buf "63" # s "dk2glocken" # amp 0.04
+  # rsend 0.8
+
+let fadeOut = every
+
+d3 silence
+
+d3 $ jux rev  $ arpeggiate
+  $ buf "[0, 10, 12, 14, 18, 25, 26, 12, 7, 9]"
+  -- |- buf 24
+  # s "dk2guitar" # amp 0.000 # dur 0.8
+  # rate (sinosc 0.98 1.01 0.25) |* rate "0.3"
+  # lpf' (sinosc 1100 3800 0.125) (triosc 0.4 0.1 0.06125)
+  # hpfreq 120 # dsend 0.6
+
+hush
+
+
+d2 $ whenmod 3 4 (off (1/16) (|* amp 0.9)) $ stack [
+  every 3 rev $ arpeggiate
+  $ buf "<f'min7'16!4 d'min7'16!2>" # s "labsquad" # amp 0.02 |+ buf 32 # pan "-1.0",
+  whenmod 4 5 rev $ arpeggiate
+  $ buf "<c'min7'16!4 g'min7'16!2>" # s "labsquad" # amp 0.02 |+ buf 32 # pan 1.0 # rate "0.99"
+  ] # dsend 0.5 # dur (sinosc 0.05 0.8 0.125)
+
+hush
+
+
+-----------------
+-- lz
+hush
+
+bpm 80
+
+d1 $  s "kicklz*2" # amp 0.1 # lpf' 2500 0.5
+
+
+d1 silence
+
+---------------------------------------------------
+--- ambient
+
+d2 $ fast 1 $ struct "t(<5 5 7>, 8)" $ arpeggiate $ buf "[c'maj7, f'maj7]"
+  # rate (triosc "-0.45" "-0.5" 0.006621) |* rate 0.5
+  |+ buf 55
+  # s "dk2guitar" # amp 0.02 # dur 3
+  # adsr' 2 0.1 0.8 1.5
+  |> pan (randosc "-0.87" 0.87)
+  # dsend 0.8 # rsend 0.9
+  # lpf' (sinosc 1500 3000 0.125) (triosc 0.35 0.1 0.25) # drive' 0.5 0.1 0.1 0.1
+
+d3 $ slow 2 $ sometimes (off (1/4) (|* amp 0.5))
+  $ struct "t(13, 16, 2)" $ arpeggiate $ buf "f'maj7" |+ buf 55
+  |+ buf (choose [-12, 0, 7, 12])
+  # s "dk2piano" # amp 0.6
+  # rate (choose [1.5, 2, 1])
+  # dur (sinosc 0.125 0.5 0.0125) # adsr' 0.5 0.4 0.1 2
+  # dsend 0.8 # rsend 0.8
+
+
+d3 silence
+
+d1 silence
+
+hush
+
+all $ (# nudge "-0.078")
+
+d2 $ slow 2 $ off (1/8) (|* amp 0.75) -- $ off (1/8) (|* amp 0.5)
+  $ buf "<[<52!4 33!4>, <55 57 55 54>, <57 61>, <~!15 <64 62 59>>]>*3"
+  # s "dk2celesta"
+  # dur 1.7 # amp 0.2
+  # adsr' 0.05 0.2 0.35 1.5 # rate (sinosc 0.485 0.501 0.125)
+  |+ buf 24 # pan (randosc "-0.2" 0.2)
+  # dsend 0.5 # rsend 0.85 # drive' 0.4 0.1 0.1 0.16
+  # lpf' 1500 0.1
+
+d2 silence
+
+hush
+
+--------
+
+d1 --  $ slow 2 -- $ struct "t <~ ~ ~ ~ t> <~ ~ ~ t> ~ t ~ ~ ~ t ~ ~ ~ t <t ~ ~> ~ <~ ~ t>"
+    $ struct "t*4"
+  $ s "simmkick" # buf 1 # amp 0.7 # dur 0.15 # drive' 0.3 0.1 0.15 0.15
+
+d2 $ s "[~ datasnare]*2" # buf 6 # amp 0.2 # rsend 0.3 # dur 0.2
+
+d3 -- $ off (-1/16) (|* amp 0.6)
+  $ struct "~ ~ ~ ~ ~ ~ ~ ~ t ~ ~ t "$ s "dataclap" # buf 8 # amp 0.1 # dur 0.03
+  # rsend 0.15 # rate 4
+
+d3 silence
+
+do
+  let mel = "<[34!4 35!4 34!4 34!4]!15 [42!16]!4>"
+      -- mel = "28!16"
+  d4 $ stack [
+      buf mel # rate 0.9975,
+      buf mel # rate 1.0025
+      ]
+      # s "bassfinger"
+    # amp 0.6 |+ buf 17 # dur 0.15 # adsr' 0.001 0.1 0.1 0.1
+    # drive' 0.5 0.1 0.1 0.4
+
+d5 $ sometimes (off (1/16) (|* amp 0.8))
+  $ struct "t(3, 8, 0)" $ buf "<c f c f c f d g>'min7'5"
+  # s "labsquad" |+ buf "<56!16 51!4>" # amp 0.1
+  # dur 0.5 # rate 1.0 # rsend 0.5 # dsend 0.5
+
+hush
+
+
+
+--- wen ambient
+
+d1 $ rarely (off (1/8) ((|+ note "<0 9 7>").(|* amp 0.5)))
+  $ fast 1.5
+  $ s "noise1" # amp 0.15  # dur 3
+  # adsr' 1 0.5 0.5 2
+  # note "<67!24 60!4>"
+  |+ note (choose [0, 19, 0, 0, 17, 0])
+  # rsend 0.75 # dsend 0.8
+
+hush
+
+d2 $ slow 2 $ sometimes rev
+   $  (off (1/16) ((|+ note "<0 12>").(|* amp 0.5)))
+  $  (off (1/16) ((|+ note 9).(|* amp 0.5)))
+  $  (off (1/8) ((|+ note 9).(|* amp 0.5)))
+  $ s "noise1" # amp 0.2 -- # dur 3
+  -- # adsr' 1 0.5 0.5 2
+  # note "<74 80>" # pan (randosc "-1.0" 1.0) |* pan 0.7
+  |+ note (choose [0, 7, 0, 0, 4, 0])
+  # rsend 0.5 # dsend 0.8
+
+hush
+
+d2 silence
+
+
+--- antiguo robot
+
+d1 $ slow 2 $ s "soft"
+  # amp 0.1
+  # detune "<1.01 0.991>"
+  # flutterdepth "<-0.5 -0.2>"
+  # rel 7.5 # atk 2.5
+  # pan ( range  0.0 1.0 sine ) |- pan "0.5"
+  # lpfreq "2500"
+  # note "[<69 67 74>, <62, 64, 59>]"
+  |+ note "<12 0>"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------
+------------------------------------
+
+do
+  -- let pat = binaryN 16 "<45150 55000 352>"
+  let pat = slow 2 $ ascii "<h e p> o l a"
+  d1 $ sometimes (# rsend (choose [0.01, 0.1, 0.2, 0.4])) $ slow 1 $ struct pat $ s "lowseed"
+    # buf 3
+    # amp 0.2 # adsr' 0.01 0.15 0.4 0.1
+    # dur 0.14 # humanize
+  d2 $ off (1/16) (|* amp 0.5) $ slow 1 $ struct (inv pat) $ s "hiseed" # buf 1 # amp 0.07 # adsr' 0.01 0.15 0.1 0.1 # dur 0.2 # humanize # pan (randosc "-0.7" 0.7)
+
+hush
+
+ascii "h o l a"
+
+
+
+
+-----------------------------------------
+-----------------------------------------
+
+bpm 135
+
+let metro = buf "0 1 1 1" # s "datakick" # amp 0.3 # adsr' 0.001 0.1 0.1 0.1 # dur 0.05 # buf 0
+
+
+--------------------------------------------
+
+
+-- probando el sistema completo
+
+
+hush
+
+d1 $ metro # adsr' 0.0001 0.1 0.7 0.1 # begin ("0.0") # dur 0.08 # buf 3 # rate 1.5
+
+hush
+
+streamHush
+
+d1 $ slow 2 $ stack [
+  struct (ascii "h o l a") $ s "tambourine" # buf 0 # pan "-1.0",
+  struct (ascii "a l o h") $ s "tambourine" # buf 2 # pan "1.0"
+] # amp 0.06 # dur (randosc 0.02 0.1) # adsr' 0.01 0.1 0.1 0.1
+
+d2 $ sometimes (plyWith "<2 2 4>" ((|* amp 0.9) .(|* pan "-0.9")))
+  $ slow "4 2 8"
+  $ struct (ascii "k o n g") $ s "dk2jungle" |+| buf (irand 16)
+  # pan (randosc "-0.7" 0.7) |* pan (randosc 0.2 0.99)
+  # amp 0.1 |+| dur (randosc 0.05 0.2) # rate (choose [0.5, 0.75, 1.0, 2.0, 3.0])
+  # lpf' (sinosc 2500 7500 0.125) 0.34 # dsend (randosc 0.01 0.4)
+
+hush
+
+d2 -- $ slow 2 $ struct (ascii "k i e e")
+  $ struct "t(16, 16)"
+  $ sometimes (|+ note 2)
+  $ note "{32*6 31*7 34*6}%16"
+  # s "filmbass" # amp 0.4 # detune (sinosc 0.97 1.03 0.25)
+  # feedback (triosc 0.5 2.2 0.125) # adsr' 0.001 0.05 0.1 0.05 # dur (triosc 0.03 0.08 0.06125)
+  # lpf' (triosc 8500 2500 0.125) (triosc 0.87 0.5 0.125)
+
+
+d3 $ almostNever (|+ note "<7 12 9 7 12>")
+  $ note "[64, 65, <67 67 69>](3, 8, <2 4 7 5>)"
+  # s "dreamy2" # amp 0.1 # adsr' 0.2 0.15 0.4 2
+  # detune (randosc 0.99 1.015) # dsend 0.4 # dur 0.4
+
+
+hush
+
+-- parece que llegué al límite con buffer de 128
+
+
+d1 $ slow "<[1 2 1 2] [2 1 2 1]>" $ note "{32!6 33!2 32!6 30!6}%16" # s "filmbass" # amp 0.1
+  |+ note "<12 0 0 24 12 0>"
+  # feedback (triosc 0.7 3.8 0.125) # dur (triosc 0.01 0.08 0.25)
+    # lpf' (randosc 200 1200) (randosc 0.88 0.85) # detune (randosc 1.2 0.99)
+
+d1 $ note "[72, <77 75>](<2 3 5>, 8, <2 4 6>)" # s "dreamy2" # amp 0.05
+  # detune (randosc 0.99 1.01) # rsend 0.5
+  # dsend 0.4 # lpf' (sinosc 2500 5500 0.125) 0.5
+
+  d1 $ slow 2 $ stack [
+    struct (ascii "k t a l") $ s "tambourine" |+| buf (choose [0, 2, 4, 6]) # pan "-1.0",
+    struct (ascii "z z z z") $ s "tambourine" |+| buf (run 8) # pan "1.0"
+  ] # amp 0.06 # dur (randosc 0.02 0.1) # adsr' 0.01 0.1 0.1 0.1
+
+hush
+
+-- bye
+
+
+
+-----------------------
+
+
+d4 $ jux rev $ sometimes (off (1/16) ((|* amp 0.8)))
+  $ note "{<62!3 69> <65!2 <72 <76 75>!2>> <67 65 64 62 59>}%16"
+  # s "soft2"  # dur 0.3
+  # adsr' 0.01 0.1 0.7 1 # amp "{0.5 0.1 0.8}%16"
+
+streamHush
+
+d3 $ note "30*16" # s "filmbassNuevo2"
+  # amp 0.3 # adsr' 0.001 0.1 0.1 0.1 # dur (sinosc 0.02 0.14 0.25)
+  # detune (sinosc 0.97 1.03 0.125)
+  # feedback (triosc 2.5 0.7 0.5)
+  # dsend (triosc 0.5 0.01 0.5)
+  |+ note "<-12 [-12 0]>"
+
+hush
+
+d4 $ note "[52, 55](2, 8)" # s "discreet3" # amp 0.2 # drive' 0.5 0.2 0.1 0.4
+   # lpf' (sinosc 1200 8500 0.25) (sinosc 0.86 0.4 0.25)
+    # adsr' 0.5 0.5 0.5 0.5 # dur 1.5 # detune "<1.0!3 1.5>"
+    |* detune (sinosc 0.98 1.02 0.125) # dsend 0.4
+
+hush
+
+
+-------------------------
+
+--- 707
+
+hush
+
+d3 $ struct "t*4" $ s "707" # buf 1 # amp 0.3 # dur 1 # humanize
+
+d2 $ (sometimes (off (1/8) ((|* rate 5)))) $ struct "[~ t]*2" $ s "707" # buf 3 # amp 0.1 # dur 1 # pan 0 # rate "1" # sus 0.1 # humanize # ngrains 20
+  # rsend 0.25
+
+d2 $ stack [
+  struct "[~ t ~ t]*2" $ pan "-1.0",
+  struct "t(3, 8)" $ pan 1.0
+  ]  # s "707" # buf 14 # amp 0.05 # ngrains (sinosc 10 50 0.5) # humanize
+
+d2 $ struct "t*16" $ amp "{0.01 0.1 0.2}%16" # s "707" # buf 9 # rate "1" # rsend 0.3 # ngrains 80 # humanize # dsend 0.1
+
+hush
+
+
+---
+-- breaks
+bpm 135
+
+hush
+
+struct "t*16" $ s "4"
+
+do
+  let r1 = "0 1 2 3 0 1 2 3 0 1 2 3 0 1 2 3"
+      r2 = "0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7"
+  d1 $ loopAt 2 -- $ slice 16 r1
+    -- $ rarely (off (1/32) ((|* amp 0.65)))
+    $ slice 16 r2
+    $ s "breaks" # buf 0 # amp 0.15 # dur 1.0 # rate 0.8
+    # ngrains 120 # bufTempo 165 # rsend 0.3
+    # drive' 0.3 0.1 0.1 0.1
+    # lpf' 6500 0.1
+    -- |+| lpf' (triosc 750 4500 0.2) 0.7
+
+d2 $ struct "t*16" $ s "tambourine" # buf 0 # amp 0.3 # dur 1
+
+d6 $ fast 16 $ randslice 16 $ s "breaks" # buf 0 |+| amp (randosc 0.01 0.3)
+
+
+
+hush

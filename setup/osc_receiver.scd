@@ -100,7 +100,8 @@ OSCdef(\tidal, { |...args|
 	var td, to_synth = [];
 	var toPrint;
 	td = parserTidal.(data);
-	//consolePrinter.(td);
+	//if (td['prinT']) {consolePrinter.(td)};
+	consolePrinter.(td);
 	Synth(td['s'], td.getPairs, ~src)
 }, '/tidalcycles');
 
@@ -180,10 +181,111 @@ OSCdef(\sinte1orca, { |...args|
 // desde open stage control
 
 
+// faders
 
 OSCdef(\fader_1, { |msg|
 	msg.postln;
 }, '/fader_1', addrOpenStageControl);
+
+OSCdef(\fader_2, { |msg|
+	msg.postln;
+}, '/fader_2', addrOpenStageControl);
+
+OSCdef(\fader_3, { |msg|
+	msg.postln;
+}, '/fader_3', addrOpenStageControl);
+
+OSCdef(\fader_4, { |msg|
+	msg.postln;
+}, '/fader_4', addrOpenStageControl);
+
+OSCdef(\fader_5, { |msg|
+	msg.postln;
+}, '/fader_5', addrOpenStageControl);
+
+OSCdef(\fader_fx1, { |msg|
+	msg.postln;
+}, '/fader_fx1', addrOpenStageControl);
+
+OSCdef(\fader_fx2, { |msg|
+	msg.postln;
+}, '/fader_fx2', addrOpenStageControl);
+
+// mute
+
+OSCdef(\mute_1, { |msg|
+	msg.postln;
+}, '/mute_1', addrOpenStageControl);
+
+OSCdef(\mute_2, { |msg|
+	msg.postln;
+}, '/mute_2', addrOpenStageControl);
+
+OSCdef(\mute_3, { |msg|
+	msg.postln;
+}, '/mute_3', addrOpenStageControl);
+
+OSCdef(\mute_4, { |msg|
+	msg.postln;
+}, '/mute_4', addrOpenStageControl);
+
+OSCdef(\mute_5, { |msg|
+	msg.postln;
+}, '/mute_5', addrOpenStageControl);
+
+OSCdef(\mute_fx1, { |msg|
+	msg.postln;
+}, '/mute_fx1', addrOpenStageControl);
+
+OSCdef(\mute_fx2, { |msg|
+	msg.postln;
+}, '/mute_fx2', addrOpenStageControl);
+
+// pan
+
+OSCdef(\pan_1, { |msg|
+	msg.postln;
+}, '/pan_1', addrOpenStageControl);
+
+OSCdef(\pan_2, { |msg|
+	msg.postln;
+}, '/pan_2', addrOpenStageControl);
+
+OSCdef(\pan_3, { |msg|
+	msg.postln;
+}, '/pan_3', addrOpenStageControl);
+
+OSCdef(\pan_4, { |msg|
+	msg.postln;
+}, '/pan_4', addrOpenStageControl);
+
+OSCdef(\pan_5, { |msg|
+	msg.postln;
+}, '/pan_5', addrOpenStageControl);
+
+OSCdef(\pan_fx1, { |msg|
+	msg.postln;
+}, '/pan_fx1', addrOpenStageControl);
+
+OSCdef(\pan_fx2, { |msg|
+	msg.postln;
+}, '/pan_fx2', addrOpenStageControl);
+
+OSCdef(\keyboard_1, { |msg|
+	var note = msg[1];
+	var gate = msg[2];
+	if (gate > 0, {
+		Synth([\aaa, \aaa2, \discreet3].choose, [
+			\freq, note.midicps * [0.5, 1.0, 0.5, 0.51, 1.5, 0.5, 1.0, 0.5, 0.25, 2].choose,
+			\atk, 7, \rel, 7.5, \dur, 6,
+			\detune, rrand(0.99, 1.01),
+			\lpfreq, exprand(500, 2500), \lpres, exprand(0.2, 0.85),
+		]);
+	}, {});
+}, '/keyboard_1', addrOpenStageControl);
+
+
+
 
 "recibiendo OSC desde Open Stage Control".postln;
 

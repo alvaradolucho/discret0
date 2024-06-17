@@ -33,20 +33,20 @@ Ndef(\continuo2, { | freq=220, amp=0.8 |
 }).fadeTime_(5);
 
 
-Ndef(\continuo3, { | freq=220, amp=0.325 |
+Ndef(\continuo3, { | freq=220, amp=0.38 |
 	var sig;
 
 	freq = ( [55, 65, 62, 69, 72]).midicps * 2;
 	freq = freq * LFNoise1.kr(7.5).range(-0.55, 0.1).midiratio;
-	freq = freq * LFSaw.kr(l.tempo * 4.0).range(1,4).round(1.0);
+	freq = freq * LFSaw.kr(l.tempo * 2.0).range(1,2).round(1.0);
 	sig = VarSaw.ar(freq, width: LFNoise1.kr(7.5).exprange(0.5, 0.9), mul: amp);
-	sig = VadimFilter.ar(sig, LFSaw.ar(l.tempo / 32).exprange(220, 3200), LFNoise1.kr(2.5).exprange(0.01, 0.2), type: 1);
+	sig = VadimFilter.ar(sig, LFSaw.ar(l.tempo / 32).exprange(620, 6200), LFNoise1.kr(2.5).exprange(0.01, 0.2), type: 1);
 	//sig = sig * LFSaw.ar(l.tempo  / 0.25).exprange(-20.dbamp, 1.00);
 	sig = Splay.ar(sig);
 	sig = sig * LFSaw.ar(l.tempo  / 0.125).exprange(-20.dbamp, 1.00);
 	sig = sig + 0.729 * JPverb.ar(
 		sig,
-		\rtime.kr(2.25),
+		\rtime.kr(3.25),
 		\damp.kr(0.25),
 		\size.kr(1.0),
 		\earlyDiff.kr(0.207),
@@ -72,8 +72,8 @@ t.tempo
 Ndef(\continuo2, { | freq=220, amp=0.335 |
 	var sig;
 
-	freq = ( [52, 61, 60, 69] + 12).midicps * 1.0;
-	freq = freq * LFNoise1.kr(4.5).range(-0.35, 0.1).midiratio * 1;
+	freq = ( [52, 61, 60, 69] + 12).midicps * 2.0;
+	freq = freq * LFNoise1.kr(4.5).range(-0.35, 0.1).midiratio * 2;
 	freq = freq * LFSaw.kr(l.tempo * 2.0, pi).range(1, 3).round(1.0);
 	sig = AnalogFoldOsc.ar(freq, LFSaw.ar(l.tempo * 4).exprange(0.15, 1.0))  * amp;
 	//sig = SinOscFB.ar(freq, 0.0, mul: amp) * 0.9;
@@ -96,16 +96,16 @@ Ndef(\continuo2, { | freq=220, amp=0.335 |
 }).fadeTime_(5);
 
 
-Ndef(\continuo3, { | freq=220, amp=0.325 |
+Ndef(\continuo3, { | freq=220, amp=0.2 |
 	var sig;
 
-	freq = ( [55, 65, 62, 69, 72]).midicps ;
-	freq = freq * LFNoise1.kr(7.5).range(-0.55, 0.1).midiratio * 1.0;
-	freq = freq * SinOsc.kr(l.tempo * 2.0).range(1, 3).round(1.0) ;
+	freq = ( [55, 65, 62, 69, 72]).midicps * 2;
+	freq = freq * LFNoise1.kr(7.5).range(-0.55, 0.1).midiratio * 2;
+	freq = freq * SinOsc.kr(l.tempo * 2.0).range(1, 4).round(1.0) ;
 	//sig = AnalogFoldOsc.ar(freq, LFSaw.ar(t.tempo * 4).exprange(0.15, 1.0))  * amp;
 	//sig = SinOscFB.ar(freq, 0.0, mul: amp) * 0.9;
 	sig = VarSaw.ar(freq, width: LFNoise1.kr(7.5).exprange(0.5, 0.9), mul: amp);
-	sig = VadimFilter.ar(sig, LFSaw.ar(l.tempo * 0.5).exprange(420, 8200), LFNoise1.kr(2.5).exprange(0.05, 0.6), type: 1);
+	sig = VadimFilter.ar(sig, LFSaw.ar(l.tempo / 2).exprange(420, 3200), LFNoise1.kr(2.5).exprange(0.05, 0.6), type: 1);
 	sig = Splay.ar(sig);
 	//sig = sig * LFSaw.ar(t.tempo / 16, pi).exprange(0.1, 1.00);
 	// Out.ar(~bus[\delay], sig * 0.dbamp);

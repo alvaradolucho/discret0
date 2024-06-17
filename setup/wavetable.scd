@@ -24,7 +24,9 @@ SynthDef(\wv, { | buf=5, freq=220, amp=0.1, t_gate=1 |
 	);
 	detuneCtrl = LFNoise1.kr({4.0.rand}!8).bipolar(\det.kr(0.2)).midiratio;
 
-	sig = Osc.ar(~wt_buf[2], freq * detuneCtrl, { Rand(0, 2pi) }!8);
+	detuneCtrl = detuneCtrl * SinOsc.ar(\vibratofreq.kr(0.25) * l.tempo).range(\vibratodepth.kr(1.0), 1.0);
+
+	sig = Osc.ar(~wt_buf[6], freq * detuneCtrl, { Rand(0, 2pi) }!8);
 	sig = Splay.ar(sig);
 
 	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0), amp);

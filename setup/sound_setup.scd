@@ -1,8 +1,8 @@
 (
 // main
-~mainSynth.set(\drive, 0.3);
-~mainSynth.set(\bias, 0.1);
-~mainSynth.set(\saturation, 0.1);
+~mainSynth.set(\drive, 0.1);
+~mainSynth.set(\bias, 0.4);
+~mainSynth.set(\saturation, 0.001);
 ~mainSynth.set(\lpfreq, 13000);
 
 
@@ -14,8 +14,8 @@
 // \modFreq, 2.0,
 // \low, 1.0, \mid, 1.0, \high, 1.0,
 // \lowcut, 300, \highcut, 8000
-~reverbSynth.set(\reverbTime, 1.8);
-~reverbSynth.set(\size, 0.9);
+~reverbSynth.set(\reverbTime, 1.2);
+~reverbSynth.set(\size, 0.5);
 ~reverbSynth.set(\damp, 0.01);
 
 
@@ -28,7 +28,7 @@
 //\modDepth.kr(0.01),
 //\modFreq.kr(0.1)
 ~delaySynth.set(\delayTime, (0.125 / 4) * l.tempo);
-~delaySynth.set(\feedback, 0.9255);
+~delaySynth.set(\feedback, 0.7);
 ~delaySynth.set(\damp, 0.1);
 ~delaySynth.set(\diff, 0.2);
 ~delaySynth.set(\modFreq, 0.25 * l.tempo);

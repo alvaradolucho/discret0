@@ -152,17 +152,17 @@ SynthDef(\fm1, { | freq=220, t_gate=1 |
 
 	opB = VarSaw.ar(
 		(freq + ((opA * env)* 500)),
-		width: 0.01
+		width: 0.02
 		, mul: amp);
 
 	opB = opB + SinOsc.ar(
 		freq * 0.5,
-		mul: (amp + 0.25)
+		mul: (amp + 0.35)
 	);
 
 	sig = DFM1.ar(
 		opB,
-		\lpfreq.kr(2000),
+		\lpfreq.kr(4000),
 		\lpres.kr(0.01),
 		noiselevel: \filternoise.kr(0.0000)
 	);
@@ -170,7 +170,7 @@ SynthDef(\fm1, { | freq=220, t_gate=1 |
 	sig = HPF.ar(sig, \hpfreq.kr(60.0));
 
 	sig = AnalogVintageDistortion.ar(
-		sig * 0.1,
+		sig * 0.3,
 		\drive.kr(0.0),
 		\bias.kr(0.0),
 		\low.kr(0.1),
@@ -273,6 +273,36 @@ Ndef(\ndef2).free;
 
 
 
+/////////////////// noise1 (wen ambient)
+
+
+(
+SynthDef(\noise1, { | freq=220, amp=0.1, t_gate=1 |
+	var env, gate, sig;
+
+	gate = Trig1.kr(t_gate, \dur.kr(0.05));
+
+	env = EnvGen.ar(
+		Env.adsr(\atk.kr(0.01), \decay.kr(0.1), \sus.kr(0.5), \rel.kr(0.25)),
+		gate, doneAction: 2
+	) * LFNoise2.ar(4 * l.tempo).range(0.0, 1.0);
+
+	freq = ( freq * [0.995, 1.005] ) * LFNoise1.ar(4 * l.tempo).range(0.97, 1.01);
+	sig = SinOsc.ar(freq, mul: amp) ;
+
+	sig = sig + LFTri.ar(freq * 0.25, mul: (amp * 0.3));
+
+	sig = DFM1.ar(sig, \lpfreq.kr(1500), \lpres.kr(0.1), noiselevel: \noise.kr(0.005));
+
+	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+
+	sig = sig * env;
+
+	Out.ar(~bus[\main], sig);
+	Out.ar(~bus[\reverb], sig * \rsend.kr(0.0));
+	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
+}).add
+)
 
 
 /////////////

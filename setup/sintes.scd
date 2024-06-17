@@ -14,7 +14,7 @@ SynthDef(\aaa, { | freq=220, amp=0.1 |
 	sig = sig * env;
 
 	sig = DFM1.ar(sig, \lpfreq.kr(2000), \lpres.kr(0.1));
-	sig = HPF.ar(sig, 80);
+	sig = HPF.ar(sig, \hpfreq.kr(80));
 	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
 
 	Out.ar(~bus[\main], sig);
@@ -38,7 +38,34 @@ SynthDef(\aaa2, { | freq=220, amp=0.1 |
 	sig = sig * env;
 	sig = sig * LFSaw.kr(4 * l.tempo).exprange(0.25, 1);
 	sig = DFM1.ar(sig, \lpfreq.kr(2000), \lpres.kr(0.1));
+	sig = HPF.ar(sig, \hpfreq.kr(60));
 	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+
+	Out.ar(~bus[\main], sig);
+	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
+	Out.ar(~bus[\reverb], sig * \rsend.kr(0.0));
+}).add;
+
+SynthDef(\aaa3, { | freq=220, amp=0.1 |
+	var env, sig;
+
+	freq = (freq * [1.0, \detune.kr(1.015)]) * LFNoise1.kr(\vibratofreq.kr(3.8)).range(\vibratodepth.kr(-0.2), 0.0).midiratio;
+	freq = freq * LFSaw.kr(2 * l.tempo).exprange(1, 1.4).round(1);
+	env = Env.perc(\atk.kr(0.1, 0.2), \rel.kr(1.0, 0.2), curve: \curve.kr(-3.0)).ar(2);
+	sig = VarSaw.ar(freq, width: \width.kr(0.5), mul: amp);
+	sig = sig * env;
+	sig = sig * LFSaw.kr(4 * l.tempo).exprange(0.125, 1);
+	sig = DFM1.ar(sig, \lpfreq.kr(2000), \lpres.kr(0.1));
+	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+
+	sig = AnalogVintageDistortion.ar(
+		sig,
+		drivegain: \drive.kr(0.01),
+		bias: \bias.kr(0.01),
+		lowgain: \low.kr(0.0),
+		highgain: \high.kr(0.01)
+
+	) * 0.1;
 
 	Out.ar(~bus[\main], sig);
 	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
@@ -70,13 +97,32 @@ SynthDef(\aer, { |freq=220, amp=0.1, gate=0.5 |
 	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
 }).add;
 
-SynthDef(\costero, { | freq=220, vel=0.5, width=0.5, t_gate=1 |
+SynthDef(\analogfold, { | freq=220, amp=0.1 |
+	var env, sig;
+
+	freq = freq * [1.0, 1.005] * LFNoise1.kr(\vibratofreq.kr(1.8)).range(\vibratodepth.kr(-0.2), 0.0).midiratio;
+	env = Env.perc(\atk.kr(0.1, 0.2), \rel.kr(1.0, 0.2), curve: \curve.kr(-3.0)).ar(2);
+
+	//sig = NeoVarSawOsc.ar(freq, \pw.kr(0.5), \waveshape.kr(0.5)) * amp;
+	//sig = ZOsc.ar(freq, \formantfreq.kr(91), \shape.kr(0.5)) * amp;
+	sig = AnalogFoldOsc.ar(freq, \fold.kr(1.0)) * amp;
+	//sig = HarmonicOsc.ar(freq, \firstharmonic.kr(1), Array.geom(16, 0.5, \grow.kr(0.85))) * amp;
+
+	sig = sig * env;
+
+	sig = DFM1.ar(sig, \lpfreq.kr(2000), \lpres.kr(0.1));
+	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+
+	Out.ar(~bus[\main], sig);
+	Out.ar(~bus[\delay], sig * \ampDelay.kr(0.0));
+}).add;
+
+SynthDef(\costero, { | freq=220, vel=0.3, width=0.5, t_gate=1, gain=1.0, amp=0.1|
 	var vcaenv, vcfenv;
-	var amp;
 	var sig;
 
 
-	amp = vel / 4;
+	amp = amp * vel;
 
 	vcaenv = EnvGen.ar(
 		Env.perc(
@@ -98,15 +144,15 @@ SynthDef(\costero, { | freq=220, vel=0.5, width=0.5, t_gate=1 |
 		t_gate, doneAction: 0
 	);
 
-	freq = freq * SinOsc.kr(\flutterfreq.kr(0.25) * l.tempo).range(\flutterdepth.kr(-0.35), 0.01).midiratio;
+	freq = freq * SinOsc.kr(\vibratofreq.kr(0.25) * l.tempo, Rand(0, 2pi)).range(\vibratodepth.kr(-0.35), 0.01).midiratio;
 	// freq = freq!2;
-	freq = freq * [1, 1.005];
+	freq = freq * [1.0, \detune.kr(1.01)];
 	sig = VarSaw.ar(freq, 0, ( width * (4 * vcfenv + 1) ), amp);
 	sig = sig + VarSaw.ar(freq * 2.0, 0, ( width * (4 * vcfenv + 1) ), amp * 0.25);
 
 
 	sig = MoogVCF.ar(sig, ( \lpfreq.kr(2000) * ( 10 * vcfenv + 1)), \lpres.kr(0.1));
-	sig = sig * vcaenv * \trim.kr(1.0);
+	sig = sig * vcaenv * \trim.kr(1.0) * gain;
 
 	Out.ar(~bus[\main], sig * \main.kr(1.0));
 	Out.ar(~bus[\reverb], sig * \rsend.kr(0.0));
@@ -131,7 +177,7 @@ SynthDef(\analogfold, { | freq=220, amp=0.1 |
 	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
 
 	Out.ar(~bus[\main], sig);
-	Out.ar(~bus[\delay], sig * \ampDelay.kr(0.0));
+	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
 }).add;
 
 
@@ -150,7 +196,7 @@ SynthDef(\brown, { | amp=0.1 |
 	Out.ar(~bus[\reverb], sig * \reverbAmp.kr(0.0));
 }).add;
 
-SynthDef(\complex, { | freq=220, amp=0.1, t_gate=1 |
+SynthDef(\complex, { | freq=220, amp=0.1, t_gate=1, gain=1.0 |
 	var gate, lpgate;
 	var env, sig;
 
@@ -181,7 +227,7 @@ SynthDef(\complex, { | freq=220, amp=0.1, t_gate=1 |
 
 	sig = AnalogVintageDistortion.ar(sig, drivegain: \drive.kr(0.6), bias: \bias.kr(0.1)) * 0.3;
 
-	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0)) * gain;
 
 	Out.ar(~bus[\main], sig);
 
@@ -442,7 +488,7 @@ SynthDef(\discreet4, { | freq=220, amp=0.1, t_gate=1, width=0.4 |
 	osc1 = osc1 +  SinOsc.ar((freq * 2) * osc3.range(-0.2, 0.01).midiratio, mul: amp * 0.25) + VarSaw.ar(( freq  * 1.5) * osc3.range(-0.2, 0.01).midiratio, width: width, mul: amp * 0.25);
 	osc2 = VarSaw.ar(freq * osc3.range(-0.2, 0.01).midiratio, width: width, mul: amp);
 
-	noise = BrownNoise.ar(0.0005);
+	noise = BrownNoise.ar(0.00015);
 
 
 
@@ -713,13 +759,13 @@ SynthDef(\infernoise2, { | freq=220, amp=0.1, t_trig=1 |
 
 SynthDef(\kong, { | freq=220, amp=0.1 |
 	var env, sig;
-	var lfo = Ndef(\lfo1).ar;
-
+	//	var lfo = Ndef(\lfo1).ar;
+	var lfo = SinOsc.ar(freq / 32);
 	env = Env.perc(\atk.kr(0.01), \rel.kr(1.0)).ar(2);
 
 	freq = freq * [1, \detune.kr(1.01)];
 	//freq = freq * SinOsc.kr(0.35, Rand(0, pi)).range(-0.25, 0.05).midiratio;
-	freq = freq * lfo.range(-0.45, 0.05).midiratio;
+	freq = freq * lfo.range(-0.1, 0.1).midiratio;
 
 	sig = AnalogFoldOsc.ar(freq, \fold.kr(1.0));
 
@@ -735,8 +781,8 @@ SynthDef(\kong, { | freq=220, amp=0.1 |
 	//sig = ( sig * \saturation.kr(1.0) ).tanh * \attenuation.kr(1.0);
 
 	Out.ar(~bus[\main], sig);
-	Out.ar(~bus[\delay], sig * \delayAmp.kr(0.0));
-	Out.ar(~bus[\reverb], sig * \reverbAmp.kr(0.0));
+	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
+	Out.ar(~bus[\reverb], sig * \rsend.kr(0.0));
 
 }).add;
 
@@ -776,7 +822,8 @@ SynthDef(\sinoscfb, { | freq=220,  amp=0.1, pan=0.0, feedback=0.0 |
 	var env, sig;
 	var lfo;
 
-	lfo = Ndef(\lfo1).ar;
+	//lfo = Ndef(\lfo1).ar;
+	lfo = SinOsc.ar(0.25 * l.tempo);
 	env = Env.perc(\atk.kr(0.001), \rel.kr(0.5), curve: -8).ar(2);
 
 	freq = freq * [1.0, \detune.kr(1.0)];
@@ -789,10 +836,10 @@ SynthDef(\sinoscfb, { | freq=220,  amp=0.1, pan=0.0, feedback=0.0 |
 	sig = sig * env;
 	sig = DCompressor.ar(input: sig, attack: 3.0, threshold: -20);
 	sig = MoogVCF.ar(sig, \lpfreq.kr(5500) * lfo.exprange(0.25, 3.0), \lpres.kr(0.3) * lfo.range(1.5, 1));
-	sig = AnalogVintageDistortion.ar(sig, \drive.kr(0.0), \bias.kr(0.0), \low.kr(0.0), \high.kr(0.0)) * 0.1;
+	sig = AnalogVintageDistortion.ar(sig, \drive.kr(0.0), \bias.kr(0.0), \low.kr(0.0), \high.kr(0.0)) * 0.2;
 	sig = Balance2.ar(sig[0], sig[1], pan);
 	Out.ar(~bus[\main], sig);
-	Out.ar(~bus[\delay], sig * \delayAmp.kr(0.0));
+	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
 
 
 }).add;
@@ -803,16 +850,17 @@ SynthDef(\neutron, { | freq=220, amp=0.1, pan=0.0 |
 	var lfo1 = Ndef(\lfonoise).kr;
 	freq = freq * LFNoise1.kr(4.2).range(-0.25, 0.001).midiratio;
 	//freq = freq * lfo1.range(-0.25, 0.001).midiratio;
+
 	env = Env.perc(\atk.kr(0.01), \rel.kr(0.25), curve: \curve.kr(-5.0)).ar(2);
 
-	//freq = freq * [1, 0.99];
+	freq = freq * [1, \detune.kr(0.99)];
 	sig = SinOscFB.ar(freq, \feedback.kr(0.0), amp);
 
 	sig = sig + SinOsc.ar(freq * 0.5, mul: (0.125 * amp));
 
 	freq_amp_coeff = 270 * freq.reciprocal;
 	amp = amp * freq_amp_coeff;
-	sig = sig + VarSaw.ar((freq * \varharmonic.kr(2.0)) * rrand(0.997, 1.0015), {[0, pi / 2, pi, 3pi/ 4].choose}, \width.kr(0.5), amp * 0.15);
+	sig = sig + VarSaw.ar((freq * \varharmonic.kr(2.0)) * rrand(0.997, 1.0015), {[0, pi / 2, pi, 3pi/ 4].choose}, \width.kr(0.5), amp * 0.35);
 
 
 	sig = sig * LFPulse.kr(\ampModFreq.kr(4.0)).exprange(\ampModDepth.kr(0.99), 0.99);
@@ -884,25 +932,64 @@ SynthDef(\soft, { | freq=220, amp=0.1, gate=1 |
 	var lpfreqEnv;
 
 	env = EnvGen.ar(Env.perc(\atk.kr(0.01), \rel.kr(0.5)), gate, doneAction: 2);
-	lpfreqEnv = EnvGen.ar(Env.perc(3, 4), gate).range(\freqmod.kr(1.51), 1);
+	// lpfreqEnv = EnvGen.ar(Env.perc(3, 4), gate).range(\freqmod.kr(1.51), 1);
 
 	//freq = freq * [0.5, 1, \detune.kr(1.01), 1.5, [2, 3, 4].choose];
-	freq = freq * [1, \detune.kr(1.01)] * lpfreqEnv;
-	freq = freq * LFNoise2.kr(\flutter.kr(2.5) * l.tempo).exprange(\flutterdepth.kr(0.985), 1.005);
-	sig = VarSaw.ar(freq, \width.kr(0.5), mul: env.squared);
-	sig = sig.sum * amp;
+	//freq = (freq * [1, \detune.kr(1.01)]) * lpfreqEnv;
+	freq = (freq * [1, \detune.kr(1.01)]);
+	//freq = freq * LFNoise2.kr(\flutter.kr(2.5) * l.tempo).exprange(\flutterdepth.kr(0.995), 1.005);
+	//sig = VarSaw.ar(freq, width: \width.kr(0.5), mul: amp);
+	sig = SinOsc.ar(freq, mul: amp);
+	//sig = sig.sum * amp;
+	sig = sig * (env.squared);
 
 	//sig = ( sig * \saturation.kr(1) ).tanh * \attenuation.kr(1);
-	sig = HPF.ar( MoogVCF.ar(sig, \lpfreq.kr(2000) * lpfreqEnv, \lpres.kr( 0.01 )), 40);
-	sig = AnalogVintageDistortion.ar(sig, \drive.kr(0.0), \bias.kr(0.0), \low.kr(0.0), \high.kr(0.0)) * 0.2;
+	//sig = MoogVCF.ar(sig, \lpfreq.kr(2000), //* lpfreqEnv,
+	//	\lpres.kr( 0.01 ));
+	sig = HPF.ar(sig, 40);
+	//sig = AnalogVintageDistortion.ar(sig, \drive.kr(0.0), \bias.kr(0.0), \low.kr(0.0), \high.kr(0.0)) * 0.5;
 	//sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
-	sig = sig * Saw.kr(\ampmoddepth.kr(0.125) * l.tempo).exprange(\ampmodepth.kr(0.99), 1.0);
-	sig = Pan2.ar(sig, \pan.kr(0.0));
+	//sig = sig * Saw.kr(\ampmoddepth.kr(0.125) * l.tempo).exprange(\ampmodepth.kr(0.99), 1.0);
+	//sig = Pan2.ar(sig, \pan.kr(0.0));
+	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
 
 	Out.ar(~bus[\main], sig);
 	Out.ar(~bus[\reverb], sig * \rsend.kr(0.0));
 	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
 
+}).add;
+
+
+SynthDef(\soft2, { | freq=220, amp=0.1, gate=1 |
+
+	var env, sig;
+	var lpfreqEnv;
+
+	env = EnvGen.ar(Env.perc(\atk.kr(0.01), \rel.kr(0.5)), gate, doneAction: 2);
+	lpfreqEnv = EnvGen.ar(Env.perc(3, 4), gate).range(\freqmod.kr(1.51), 1);
+
+	//freq = freq * [0.5, 1, \detune.kr(1.01), 1.5, [2, 3, 4].choose];
+	freq = (freq * [1, \detune.kr(1.01)]) * lpfreqEnv;
+	//freq = (freq * [1, \detune.kr(1.01)]);
+	freq = freq * LFNoise2.kr(\flutter.kr(2.5) * l.tempo).exprange(\flutterdepth.kr(0.995), 1.005);
+	sig = VarSaw.ar(freq, width: \width.kr(0.5), mul: amp);
+	//sig = SinOsc.ar(freq, mul: amp);
+	//sig = sig.sum * amp;
+	sig = sig * (env.squared);
+
+	//sig = ( sig * \saturation.kr(1) ).tanh * \attenuation.kr(1);
+	sig = MoogVCF.ar(sig, \lpfreq.kr(2000)* lpfreqEnv,
+	\lpres.kr( 0.01 ));
+	sig = HPF.ar(sig, 40);
+	sig = AnalogVintageDistortion.ar(sig, \drive.kr(0.0), \bias.kr(0.0), \low.kr(0.0), \high.kr(0.0)) * 0.1;
+	//sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+	sig = sig * Saw.kr(\ampmoddepth.kr(0.125) * l.tempo).exprange(\ampmodepth.kr(0.99), 1.0);
+	//sig = Pan2.ar(sig, \pan.kr(0.0));
+	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
+
+	Out.ar(~bus[\main], sig);
+	Out.ar(~bus[\reverb], sig * \rsend.kr(0.0));
+	Out.ar(~bus[\delay], sig * \dsend.kr(0.0));
 }).add;
 
 SynthDef(\tecno1, { | freq=220, amp=0.1, t_trig=1 |
@@ -1019,26 +1106,6 @@ SynthDef(\harmonic, { | freq=220, amp=0.1 |
 
 }).add;
 
-SynthDef(\analogfold, { | freq=220, amp=0.1 |
-	var env, sig;
-
-	freq = freq * [1.0, 1.005] * LFNoise1.kr(\vibratofreq.kr(1.8)).range(\vibratodepth.kr(-0.2), 0.0).midiratio;
-	env = Env.perc(\atk.kr(0.1, 0.2), \rel.kr(1.0, 0.2), curve: \curve.kr(-3.0)).ar(2);
-
-	//sig = NeoVarSawOsc.ar(freq, \pw.kr(0.5), \waveshape.kr(0.5)) * amp;
-	//sig = ZOsc.ar(freq, \formantfreq.kr(91), \shape.kr(0.5)) * amp;
-	sig = AnalogFoldOsc.ar(freq, \fold.kr(1.0)) * amp;
-	//sig = HarmonicOsc.ar(freq, \firstharmonic.kr(1), Array.geom(16, 0.5, \grow.kr(0.85))) * amp;
-
-	sig = sig * env;
-
-	sig = DFM1.ar(sig, \lpfreq.kr(2000), \lpres.kr(0.1));
-	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
-
-	Out.ar(~bus[\main], sig);
-	Out.ar(~bus[\delay], sig * \ampDelay.kr(0.0));
-}).add;
-
 SynthDef(\westcoast, { | freq=220, amp=0.1, t_gate=1 |
 	var env, sig;
 
@@ -1059,7 +1126,7 @@ SynthDef(\westcoast, { | freq=220, amp=0.1, t_gate=1 |
 	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
 	//sig = SmoothFoldQ.ar(sig, lo: -0.125, hi: 0.25, foldRange: SinOsc.kr(0.25).exprange(0.1, 1.0), smoothAmount: 0.2, delta: 1e-05);
 
-	sig = DFM1.ar(sig, \lpfreq.kr(1000), \lpres.kr(0.1), noiselevel: \noiselevel.kr(0.00025));
+	sig = DFM1.ar(sig, \lpfreq.kr(1000), \lpres.kr(0.1), noiselevel: \noiselevel.kr(0.0000025));
 
 
 

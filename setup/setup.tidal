@@ -37,12 +37,12 @@ let target = Target {
     ampmoddepth = pF "ampmoddepth"
     ampmodfreq = pF "ampmodfreq"
     attenuation = pF "attenuation"
-    arp = pF "arp"
     atk = pF "atk"
     atklpg = pF "atklpg"
     bias = pF "bias"
     buf = pF "buf"
     buff = pF "buff"
+    bufTempo = pF "bufTempo"
     cQuantum = 4
     curve = pF "curve"
     decay = pF "decay"
@@ -52,9 +52,11 @@ let target = Target {
     dsend = pF "dsend"
     dur = pF "dur"
     fbdelay = pF "fbdelay"
+    fmod = pF "fmod"
     freq = pF "freq"
     feedback = pF "feedback"
     firstharm = pF "firstharm"
+    fold = pF "fold"
     formantfreq = pF "formantfreq"
     flutter = pF "flutter"
     flutterdepth = pF "flutterdepth"
@@ -69,10 +71,12 @@ let target = Target {
     modType = pI "modType"
     nSynths = pI "nSynths"
     mnote = pF "mnote"
+    ngrains = pF "ngrains"
     octmod = pF "octmod"
-    -- off = pF "off"
     osc1 = pF "osc1"
     osc2 = pF "osc2"
+    prinT = pB "prinT"
+    pw = pF "pw"
     ratio = pF "ratio"
     rel = pF "rel"
     rsend = pF "rsend"
@@ -82,9 +86,11 @@ let target = Target {
     tremolorate = pF "tremolorate"
     tremolodepth = pF "tremolodepth"
     trim = pF "trim"
+    vel = pF "vel"
     vibratodepth = pF "vibratodepth"
     vibratofreq = pF "vibratofreq"
     vibratorate = pF "vibratorate"
+    waveshape = pF "waveshape"
     width = pF "width"
     oscmap = [(target, [oscplay]), (targetHydra, [oscHydraplay] )]
     osclink = [(alink, [oscalink])]
@@ -96,11 +102,11 @@ let target = Target {
 :}
 
 :{
-    streamlink <- startStream defaultConfig osclink
+  streamlink <- startStream defaultConfig osclink
 :}
 
 :{
-    streamHydra <- startStream defaultConfig oscHydramap
+  streamHydra <- startStream defaultConfig oscHydramap
 :}
 
 :{
@@ -156,9 +162,12 @@ let p = streamReplace stream
     -- h3 = streamReplace streamHydra 3
 :}
 
+
+
 -- funciones mejoradas
 :{
-let mute p = (degradeBy 1) $ p
+let bpm b = setcps(b / 60 / 4)
+    mute p = (degradeBy 1) $ p
     sinosc min max freq = (fast freq $ range min max sine)
     triosc min max freq = (fast freq $ range min max tri)
     sqrosc min max freq = (fast freq $ range min max square)
@@ -168,15 +177,20 @@ let mute p = (degradeBy 1) $ p
     adsr' a d s r = atk a # decay d # sus s # rel r
     drive' d b l h = drive d # bias b # low l # high h
     lpf' f r = lpfreq f # lpres r
+    ampmod' rate depth = ampmodfreq rate # ampmoddepth depth
     trem' rate depth = tremolorate rate # tremolodepth depth
     vib' r d = vibratorate r # vibratodepth d
-    humanize = nudge (randosc "-0.001" 0.01)
+    humanize = nudge (randosc "-0.005" 0.015)
     sel pat p = select(p|/(fromIntegral(length pat))) pat
 :}
 
 -- patrones usuales
 :{
-  let metro = buf "0 1 1 1" # s "datakick" # amp 0.2
+let metro = buf "0 1 1 1" # s "datakick" # amp 0.2
+    onflo = buf "10*4" # s "linn" # amp 0.2
+    kick1 = struct "t ~ t ~ t t t ~" $ buf "10" # s "linn" # amp 0.2
+    kick2 = buf "10*4" # s "linn" # amp 0.2
+    tres = buf "t t t" # buf 10 # s "linn" # amp 0.2
 :}
 
 

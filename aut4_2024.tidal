@@ -1,0 +1,331 @@
+
+
+
+let ramp =
+
+let fadein c a =  triosc 0.0 a c  -- a: amp; c: cycles
+
+d1 $ onflo |* amp 0.3 # drive' 0.2 0.2 0.2 0.01 # lpfreq 2000 # humanize
+
+d2 $ note "[<62!64 60!64>, <67 69 65>]*8" # s "analogfold" # amp 0.1 # adsr' 0.01 0.1 0.1 0.5 # dsend 0.1
+  |+ note 12 # humanize # dsend 0.8
+
+d2 silence
+
+d2 $ note "{ [75, 63, 58] ~ ~}%8" # s "costero"
+  # amp 0.5 # dsend 0.5
+  # vib' 0.5 "-0.25" # vel 0.2
+
+d4 $ note "45*8" # s "complex" # amp 0.2 # atklpg 0.01 # humanize
+
+d2 $ struct "{t ~ ~}%4" $ note "<[73, 77] 76 79>" # s "discreet"
+  # amp 0.01
+  # adsr' 2 0.5 0.4 5
+
+d4 silence
+
+hush
+
+d1 $ stack[ onflo,
+  struct "[~ t ~ t]*2" $ buf "0" #  s "linn" # amp 0.2,
+  struct "~ t ~ t" $ buf 15 # s "linn" # amp 0.3,
+  struct "t*16?0.2" $ buf (choose [3, 4, 21, 22, 19, 18])
+  # s "linn" # amp 0.1 -- # dsend 0.1
+  ] # humanize -- # lpf' (sinosc 500 800 0.2) 0.8 # rate (choose [1, 2.5])
+
+
+
+--------------------------------------------------------------------------------
+--- fosfeno cuatro -------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- tecno4
+bpm 90
+
+all $ (# nudge "-0.02")
+
+d1 $ metro # amp 0.2
+
+hush
+
+let xo1 = "65 ~ 65 65 68 <~ 65> <65 ~> 65 ~ <65 71> ~ 65 65 65 65 ~"
+    xo2 = "65 ~ 71 65 68 <~ 65> <65 ~> 65 ~ <65 71> ~ 65 68 68 70 ~"
+    xo3 = "[56, 59](<11, 7>, 16, <0, 2>)"
+    xo4 = "~ ~ 64 ~ ~ 64 64 ~ ~ ~ 65 ~ ~ ~ 65 ~ ~ ~ 65 ~ ~ ~ 65 ~"
+
+d1 silence
+
+d1 $ sometimes (slow 1) $ buf "0 1 0 1 0 0 1 1 0 0 1 1 0 0 1 1" #  s "linn" # amp 0.02
+  # lpf' (triosc 4200 9500 2) (randosc 0.2 0.78)
+    |* amp 1.4 # rate 2
+
+d3 $ every 4 (# note xo1) $ note xo2
+    # s "aaa3" # amp 3 # detune (choose [1.5, 1.01])
+    # adsr' 0.01 0.1 0.1 0.2
+    # dsend 0.7 # lpf' 4000 0.1 # width 0.5 -- 0.5
+    # pan (choose [-1.0, 1.0]) |* pan 0.5
+
+d3 $ every 4 (# note xo1) $ note (xo3 + 12) -- xo2
+    # s "aaa3" # amp 0.2 # detune (choose [1.5, 1.01])
+    # adsr' 0.1 0.1 0.9 0.5
+    # dsend 0.6 # lpf' 4000 0.1 # hpfreq 550
+    # drive' 0.2 0.12 0.01 0.08
+    # pan (choose [-1.0, 1.0]) |* pan 0.5
+
+d4 $ degrade $ every 4 (# note xo2) $ note (xo1 + "12 24")
+    # s "aaa3" # amp 0.8 # detune (choose [1.5, 1.01, 0.99])
+    # adsr' 0.001 0.12 0.2 0.1
+    # dsend 0.9 # lpf' 4000 0.1
+    # pan (choose [-1.0, 1.0]) |* pan 0.5
+
+d3 silence
+d1 silence
+
+d4 silence
+
+hush
+
+------------------------------------------------------------
+------------ otro ------------------------------------------
+------------------------------------------------------------
+d4 silence
+
+do
+  let chord = "[53, 53, 62]"
+      chord2 = "[57, 57, 74]"
+  d4 $ struct "{t ~ ~}%8" $ note chord # s "costero" # amp 0.6
+    # detune 0.99 # lpf' 8000 0.6 # width (sinosc 0.01 0.2 0.0125)
+
+do
+  let notes = "~ ~ 72 ~ ~ 71 ~ ~ 72 ~ ~ ~ ~ ~ 71 ~"
+  d4 $ note notes |+ note (choose [0, 12])
+    |+ note 0
+    # s "analogfold" # amp 0.3 # dsend 0.5
+
+do
+  let chord = "[50, 50, <60, 72, 69>]"
+  d4 $ slow 2 $ struct "t(<3 5>, 8, <0 2 2>)?0.1" $ note chord
+    # s "sinoscfb" # amp 0.1
+    # drive' 0.8 0.3 0.1 0.1
+    # feedback 1.5 # adsr' 0.1 0.1 0.4 1.5
+    # lpf' 6000 0.1
+
+d3 silence
+
+d4 silence
+
+hush
+
+----------------------------------------------
+----------------------------------------------
+-- tecno5
+----------------------------------------------
+d4 silence
+
+bpm 138
+
+do
+  let chord = "[<62!3 50>, 65, 69, 71, 76, 74]"
+      chord2 = "[45, 57, 62, 65, 72, 74, 79]"
+      chord3 = "[57, 63, 67, 70, 74, 77]"
+  d3 $ note chord3
+    # s "<soft discreet>"
+    # amp "<0.015 0.03>" # adsr' 4  2 0.9 5
+    # detune (randosc 0.98 1.02)
+    # width (sinosc 0.01 0.3 0.125)
+    # lpf' 2000 0.2 # hpfreq 120
+    # dsend 0.5
+    # drive' 0.1 0.01 0.001 0.1
+
+hush
+
+d3 silence
+
+all $ (# nudge "-0.06")
+
+do
+  let notes = "50 50 50 50 50 50 50 50 50 51"
+      notes2 = "57 57 69 57 57 69"
+  d2 $ struct "t t t t t t t t t t t t t t t t"
+    $ slow 1 $ note (notes2 - 12)
+    # s "neutron" # amp (triosc 0.2 0.4 0.5) # detune (triosc 0.99 1.03 0.5)
+    |+| feedback (randosc 1.1 2.9) # adsr' 0.01 0.1 0.3 0.4
+    # drive' 0.5 0.3 0.1 0.6
+    # width (sinosc 0.01 0.5 0.25)
+    |+ note 12 # dsend 0.4
+
+d2 silence
+
+do
+  let var1 = buf "65 ~ ~ 62 ~ ~ 59 ~ ~ ~ < ~ ~ ~ [~ 64 ]> ~ "
+      var2 = buf "65 ~ ~ 62 ~ ~ 59 ~ ~ < ~ ~ ~ [~ ~ ~ 64 ]> ~ ~ "
+  d1 $ degrade $ slow 2 $ var1
+    # s (choose ["dk2glocken", "dk2celesta", "dk2piano"])
+      # amp 0.4 # dsend 0.9 # rsend 0.9
+
+hush
+
+d2 $ slow 1 $ struct "t*16" $ buf (run 32)
+    # s "amencutup" # amp 0.07 # adsr' 0.01 0.1 0.1 0.1 # rate 0.5
+
+hush
+
+
+-----------------------
+-- resucitados
+
+d1 $ silence
+d1 $ metro
+
+bpm 142
+
+do
+  let robot = -- slow 2 $ rarely (slow 2) $
+            jux rev $ s "<aaa aaa2>(<9 11>, 16, <0 2>)?0.8"
+            -- # note (choose [55, 57, 62, 65, 67])
+            # note (choose [59,  57, 61,  63,  64])
+            |+ note "{12 0 7}%8" |+ note "<-12 0 0 7>"
+            -- |+ note 12
+            # detune "1.01 0.99" # dur 0.15 |* detune 1.1
+            # atk 0.01 # rel 0.3
+            # lpfreq (sinosc 1200 2800 0.125) -- (slow 8 $ range 1200 4800 sine)
+            # lpres 0.1
+            # rsend (range 0.9 1.5 rand) # dsend 1.5
+  let liquidos = slow 2
+            $ note "[<67 69 74>, <64, 62, 59>]" --  |+ note "<0 7 12>"
+            -- |+ note "12"
+            |+ note "<12 0 >" -- |- note 12
+            # s "soft2" # detune "<1.01 0.99>"
+            # atk 2.5 # rel 7.5
+            # lpfreq 1800 # lpres 0.05 # freqmod 1.01
+            # flutter 0.02
+            # flutterdepth 0.985
+            # rsend 0.15 # amp "[0.06, 0.2]" # width (sinosc 0.5 0.7 0.125)
+  d5 $ mute $ slow 2 $ rarely (slow 2) $ ((# adsr' 0.4 0.4 0.2 1.8).(|* amp 0.7))
+    $ robot |* amp (choose [0.3, 0.125, 0.05])
+    |* amp 0.2
+    -- # adsr' 0.01 0.1 0.4 0.5 # dsend 1.2
+  d2  $ liquidos |* amp 1.0
+
+bpm 142
+
+hush
+
+d1 $ metro # adsr' 0.001 0.1 0.4 0.1 # dur 0.05
+
+d2 silence
+
+hush
+
+d1 $ metro
+
+--- robot
+
+d5 silence
+bpm 142
+hush
+
+d1 $ metro
+
+all $ (# nudge "-0.02")
+
+
+d1 $ metro
+
+d1 silence
+
+d2 -- $ every 8 (slow 2) $ every 4 rev $ every 2 (jux rev) $ every 4 rev $ slow 2
+  -- $ note "[[59 57] [54 55] [54 52] [54 52]]!2" |+ note "<0 12>"
+  -- $ note "[[59 57] [54 55] [61 61], [54 52] [54 52], [49 49]]!4"--  |+ note "<0 12>"
+   $ fast 2
+   $ every 4 (jux rev)
+   $ note "[<59 57>(3, 8, <1 3>),  <61 63 64>(<5 7>, 8, 2)]"
+  -- $ note "[[59 57] [54 55] [54 52] [54 52]]!2" |+ note "<0 12>"
+  -- $ note "[[59 57] [54 55] [61 61], [54 52] [54 52], [49 49]]!4"--  |+ note "<0 12>"
+   |+ note "<-12 0 12 <0 <12 24>>>"
+   -- |+ note "<<0 [0 -5]> -12>"
+  # s "<aaa>"
+  #  amp (range 0.007  0.15 rand)
+  |* amp 0.0
+  # atk 0.01 # rel "<0.15, 0.27>"
+  # formantfreq (randosc 2400 4800) # width 0.3
+  # detune (randosc 0.99 1.02)
+  # pw "0.8 0.6 0.9"
+  # shape (range 0.4 1.8 rand) |* shape 1.6
+  # lpfreq "<2000 1200 500 1000>" |* lpfreq "0.5 0.75" |* lpfreq 0.8
+  # lpres 0.6
+  # hpfreq 120
+  # dsend 0.6 # waveshape 0.6
+  # rsend 0.3
+   # vibratodepth "-0.2 -0.5"
+
+d3  $ every 3 (fast 4)
+  $ note "[69, 55](<7 5 9>, 16, <2, 0, 5>)"
+  # s "aaa"
+  |+ note "<0 -12 -12 <12 7>>"
+  # amp 0.15 # width 0.5
+  # pan (range 0.0 1.0 rand) |* pan 1.0
+  # atk "0.001 0.01 0.01"
+  # rel 0.3 # vibratofreq 2.4 # vibratodepth "-0.1"
+  # lpfreq (range 6550 2200 sine ) |* lpfreq 0.5
+  # hpfreq 350
+  # dsend 0.4
+
+d1 $ metro
+
+d1 silence
+
+d2 silence
+
+d3 silence
+
+d3 $ degrade $ degrade $ degrade $ every 3 (fast 4)
+  $ note "[69, 55](<7 5 9>, 16, <2, 0, 5>)"
+  # s "aaa2" # amp 0.15 |* amp 1.0
+  |+ note "<0 -12 -12 <12 7>>"
+  # pan (randosc "-1.0" 1.0) |* pan 1.0
+  # atk "0.001 0.01 0.01" # rel 0.1
+  # vibratofreq 2.4 # vibratodepth "-0.3"
+  # dsend 0.7 # rsend (sinosc 0.1 0.7 0.25)
+  # hpfreq 120
+  # lpfreq (range 3550 2200 sine) # lpres (randosc 0.6 0.8)
+  |* lpfreq 1.0
+
+hush
+
+x5 silence
+d4 silence
+d3 silence
+d2 silence
+x1 silence
+
+d1 $ s "soft"
+  # amp 0.09
+  # detune "<1.01 0.991 0.985>"
+  # flutterdepth "<-0.5 -0.2>"
+  # rel 7.5 # atk 2.5
+  # pan ( range  0.0 1.0 sine ) |- pan "0.5"
+  # lpfreq "6500"
+  # note "[<69 67 74>, <62, 64, 59>]"
+  |+ note "<12 0>"
+  |+ note "-12"
+
+hush
+
+x2 $ jux rev $ every 4 (slow 2) $ "[oh]*16"
+  # amp 0.01144
+  # rate (rand * 3 + 4)
+  # lpfreq (range 2500 5500 sine)
+
+
+x2 $ every 3 (jux rev) $ s "oh(<15 11>, 16)"
+   # amp 0.1
+   # lpfreq "8000 4000 2000" |* lpfreq 0.47
+   # pan (rand - 0.5) |* pan "0.25"
+   # rate "<4 2 3 8>!7 <0.5 0.75 0.25 0.5>" |* rate "3"
+   # rsend "0.2 0.7 0.1 0.9"
+
+   x5 $ every 4 rev $ s "neutron*8"
+   # note "32*8" |+ note "[0 0 12]"
+   # feedback "1.4 0.2 1.5 0.7 0.2 2.5 0.4 0.6"
+   # drive 0.75
+   # amp 0.0235

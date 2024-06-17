@@ -1,15 +1,16 @@
-:script "C:/Users/Lucho Alvarado/Documents/automat4/dev/automat4_set_dev2/setup.tidal"
-:script "C:/Users/Lucho Alvarado/Documents/automat4/dev/automat4_set_dev3/setup.tidal"
+:script "C:/Users/Lucho Alvarado/Documents/automat4/dev/discret0/setup/setup.tidal"
 
 
-:script "setup/setup.tidal"
 
 let bpm x = setcps(x/60/4)
 
 bpm 90
 hush
 
-d1$ slow 1 $ whenmod 16 4 (|+| buf "<-5 7>") $ off (1/16) ((|+ buf "<5 7 5 7 14>").(|* amp 0.6) . (|* pan "-1"))
+
+hush
+
+d1 $ slow 1 $ whenmod 16 4 (|+| buf "<-5 7>") $ off (1/16) ((|+ buf "<5 7 5 7 14>").(|* amp 0.6) . (|* pan "-1"))
   $ buf "[<60!16 62!16>, <65!16 67!8>]*8" # s "labsminipunk"
   # adsr' 0.01 0.1 0.15 0.5 # dsend 0.95 # rsend 0.82 # lpf' 8000 0.3
   # rate (sinosc 0.985 1.025 0.125) # pan (randosc "-1.0" 0.1) |* pan (sinosc 0.1 0.9 0.25)
@@ -31,7 +32,7 @@ hush
 ---
 -- mui.selestial
 
-bpm 133
+bpm 134
 
 all $ (# nudge "-0.03")
 
@@ -39,66 +40,163 @@ d1 $ metro
 
 hush
 
-let dkdrum p = (# rate 0.333) $ (# s "dk2drumkit") $ p
-    muycelestial p =
-      (# note "<57!12 52!2 59!4>") .
-      (# detune (slow "<8 4>" $ range 0.99 1.01 tri))
-      $ (# s "discreet4(<1 2>, 16)") $ p
+
 
 do
   let kick =
          struct "~ t ~ ~ t t ~ ~"
         --struct "t t ~ t t t ~ t"
         $ s "amencutup" # buf 0 # atk (range 0.01 0.1 rand)
-        # lpfreq 1000 # lpres 0.01 # low 0.1 # drive 0.2 # rsend 0.2
+        # lpfreq 1000 # lpres 0.01 # low 0.01 # drive 0.2 # rsend 0.2
         # hpfreq 120
-      snare = -- struct "~ t ~ t"
-        -- sometimes (off (1/16) (|* amp 0.99)) $
-        struct " <~ <~ ~ t ~>> ~ t ~ ~ ~ <[t t] t!3>~"
-        $ s "amencutup" # atk (range 0.01 0.2 rand) # buf 2
+      snare =  struct "~ t ~ t"
+        -- $ sometimes (off (1/16) (|* amp 0.99)) $
+        -- struct " <~ <~ ~ t ~>> ~ t ~ ~ ~ <[t t] t!3>~"
+        $ s "amencutup" # atk (range 0.01 0.1 rand)
         # rsend (choose [0.1, 0.7, 0.2]) # lpfreq 7000
       tambourines =  stack [
         struct "<~ t> t t t t t t t <t ~> t t t t t t t" $ buf "2" # pan "-0.7",
-        struct "~ t ~ t t t t t t t t t t ~ t t" $ buf "1" # pan 0.7
+        struct "~ t <~ t> <t ~> t t t t t t t t t ~ t t" $ buf "<1 3> 1" # pan 0.7
         ] # s "tambourine"
   d1 -- $ sometimes (plyWith "4" (|* amp 0.99) )
     $ stack [
       kick # amp 0.3,
       snare # amp 0.4,
-      slow "2 1 1" $ tambourines # amp 0.15 # lpfreq 8000
-    ]
+      slow "1 1 1" $ tambourines # amp 0.1 # lpfreq 7000
+    ] # rate 1.0 # lpfreq 7200
     # drive 0.3 # bias 0.02
     |* amp 0.8
 
 d1 silence
 
+hush
+
+let dkdrum p = (# rate 0.333) $ (# s "dk2drumkit") $ p
+    muycelestial p =
+      -- (# note "<57!12 52!2 59!4>") .
+      -- (# note "<52, 54, 59>") .
+      (# note "<52, 57, 59>") .
+      -- (# note "<52, 57, 59>") .
+      -- (# note "<49, 59, 6>") .
+      (# detune (slow "<8 4>" $ range 0.99 1.015 tri))
+      $ (# s "discreet4(<2 2>, 16)") $ p
+
 do
   let mui = slow 2
           $ sometimes (jux rev)
           $ every 4 ((rev). (|- note "<7 5!3>"))
-          $ slow 0.5 $ muycelestial $ amp 0.09 # dur 5.5
-          # arp (choose [0.5, 0.5, 0.5, 1.0]) |* arp 0.75 -- 0.25
+          $ slow 1.0 $ muycelestial $ amp 0.09 # dur 5.5
+          # arp (choose [0.5, 0.5, 0.5, 1.0]) |* arp 1 -- 0.25
           |+ note (choose [0, 12])
-          -- |+ note "-12"
           |+ note 12
-          # atk 2.5 # rel 6.5 # dsend 1.5 # rsend 1.5
-          # drive 0.2 # bias 0.1
-          # modType (irand 7)
-          # lpfreq (slow 4 $ range 600 3800 tri) # low 0.1 # high 0.2
+          # atk 0.1 # rel 2 # dsend 0.5 # rsend 0.5
+          # drive 0.5 # bias 0.1
+          # modType (irand 1)
+          # lpfreq (slow 4 $ range 2600 7800 tri) # low 0.01 # high 0.1
           |* lpfreq 1.4 -- 0.3
-          # lpres 0.3
+          # lpres 0.5
           # ampmodfreq (choose [1, 2, 3, 4, 5, 6, 8, 0.5, 4])
-          |* ampmodfreq 0.5
-          # ampmoddepth (range 0.2 0.5 rand)
+          |* ampmodfreq 1
+          # ampmoddepth (range 0.1 0.5 rand)
           # pan (range "-0.6" 0.6 rand)
           # vibratofreq (choose [0.5, 0.25, 1.0, 0.125, 0.25, 4, 6, 8])
-          # vibratodepth (range "-0.3" 0.01 rand)
-  d3 $ mui |* amp 0.01
+          # vibratodepth (range "-0.5" 0.04 rand)
+          # hpfreq 240
+  d3 $ mui |* amp 0.4 -- 0.4
+
+
+-- para el mui selestial
+
+bpm 110
+
+all $ (# nudge "-0.03")
+
+d1 $ slow 2  $ always (stutWith 1 (1/32) ((|* amp 0.5) . (|* rate 1.02) . (|* rsend 2)))
+  $ struct "t*8" $ s "amencutup" # amp 0.1 # buf (run 32  * 2  )
+  # adsr' 0.01 0.01 0.9 0.1 # rsend 0.125 # rate 1
+
+hush
+
+d1 $ sometimes (|+ note 0)
+  $ slow 6
+  $ note "[60, 67, 71](<4 3>, 8)" # s "discreet3" # amp 0.0035 # adsr' 4 0.1 0.5 5.5
+  # dur 0.8
+  |- note 12
+  # detune (randosc 0.99 1.01) # width (sinosc 0.01 0.3 0.25) # ampmodfreq 1
+  # ampmoddepth 0.9 # flutter 0.25
+  # dsend 0.8 # lpf' (triosc 400 1200 0.125) 0.4
+
+  -------------------
+
+d2 $ degrade $ every 16 (|+ note 12) $ struct "t(3, 8)?0.45"
+  $ note "[ <44 42 45>,   <57 59 <62 55> 52 <55 [50, 64]>> ]" # s "wv" # amp 0.015
+  # adsr' 2 0.1 0.1 5.1 # dur 2.0 # det (randosc 0.01 0.3)
+  # dsend 0.5 # rsend 0.5 # drive 0.1 # high 0.1
+  # lpf' (sinosc 500 1800 0.125) 0.4
+
+d2 silence
+
+d3 $ sometimes (off (1/8) ((|* amp 0.95).(|+note "<12 0 0 >")))
+  $ slow 2 $ note "[<72!24 64!24 72!24>, <70!64 67!64>, <74!16 77!8>]"
+  # s "dreamy2" # amp 0.03
+  # detune (randosc 0.98 1.02)
+  # adsr' 3 0.1 0.5 7 # dur 3
+  # dsend 0.6 # rsend 0.6
+  # nSynths (choose [7, 9, 12, 15, 17]) # width (randosc 0.01 0.2)
+  # lpf' 2500 0.2
+  # ampmoddepth 0.4 # ampmodfreq 0.25
+
+
+hush
+----------------------------
+
+bpm 90
+
+hush
+
+d1  $ struct "t t t ~ t t ~ t t t ~ t ~ t t t" $ buf (choose [3, 2, 6, 7])  # s "tambourine" # amp 0.04
+  # pan (randosc "-1.0" 1.0) |* pan (sinosc 0.01 0.99 0.5)
+
+d1 silence
+
+d2 $ every 8 (rev) $ almostNever ((# rsend 0.8)) $ stack [
+  slow 2 $ struct "t(3, 8)" $ s "lowseed" # buf "0",
+  struct "t(<5 7>, 8, 2)" $ s "midseed" # buf "<3 5>" # pan "-0.2",
+  struct "t(<3 1 7 1 9 1 >, 16, 7)" $ s "hiseed" # buf "<5 9>" # pan (randosc "-1.0" 1.0)
+] # amp 0.06
+
+d3 silence
+
+d3 $ degrade $ slow 2 $ struct "t*16?0.4"
+  $ s "kong"
+  # freq (choose [200, 240, 340, 520])
+  # amp (randosc 0.03 0.07)
+  # detune (choose [0.99, 1.02])
+  # fold (randosc 0.1 0.9)
+  # dsend 0.7
+  # atk 0.1  # rel 5.5
+
+d4 $ stutWith 16 (1/16) ((|* amp 0.98) . (|* lpfreq 0.95) .(# detune (randosc 0.99 1.01)))
+  $ note "38/2" # s "sinoscfb" # amp 0.001
+  # feedback (sinosc 0.8 2.1 1) #  detune 1.01 # rel 0.7
+  # dsend 0.6 # lpf' 1500 0.4 # atk 0.05
+  # humanize
+
+d4 silence
+hush
+
+d1 $ silence
+
+d2 $
 
 
 -- nuevo jesus 2
 
 d3 silence
+
+d1 silence
+
+d1 $ metro
 
 d1 $ metro
 
@@ -227,7 +325,9 @@ do
 
 d4 silence
 
+d1 $ metro
 
+bpm 109
 
 do
   d3 silence
@@ -256,7 +356,7 @@ do
         slow 1 $ tambourines # amp 0.26 # lpfreq 5400
       ]
       # drive 0.3 # bias 0.02
-      |* amp 1.1
+      |* amp 0.5
 
 d1 silence
 ---
@@ -630,7 +730,7 @@ bpm 152
 all $ (# nudge "-0.06")
 
 d3 silence
-d4 silence
+d1 silence
 
 d1 --  $ sometimes (off (1/32) ((|* amp 0.95)))
   $ stack[
@@ -638,13 +738,13 @@ d1 --  $ sometimes (off (1/32) ((|* amp 0.95)))
   , fast 2 $ s "~ datach <~ datach> dataoh" # buf "2 6" # amp 0.1 # adsr' 0.02 0.1 0.1 0.1
   ] # lpf' 1500 0.3
 
-d2 -- $ off (1/16) ((|+ note 0).(|* amp 0.9))
+d2 --  $ off (1/16) ((|+ note 0).(|* amp 0.9))
   $ struct "t*8"
   $ feedback (sinosc 0.5 2 0.125)
-  $ whenmod 16 4 ((# note "31 31 31 29"))
+  -- $ whenmod 16 4 ((# note "31 31 31 29"))
   # s "filmbassNuevo2"
   # note "<32 35 35 36> 32 31"
-  # amp 0.01 # detune (randosc 0.99 1.01)
+  # amp 0.1 # detune (randosc 0.99 1.01)
   # adsr' 0.01 0.2 0.3 0.2
   # dur 0.13
   # drive' 0.5 0.01 0.3 0.3
@@ -652,7 +752,7 @@ d2 -- $ off (1/16) ((|+ note 0).(|* amp 0.9))
   -- |+ note 0
 
 do
-  let padstecno3 = slow 4 $
+  let padstecno3 = slow 1 $
                 every 7 (|+ note 3) $
                whenmod 16 4 ((# note "[59, 68]")) $
                struct "t(5, 8)"
@@ -757,9 +857,13 @@ do
     tambourines
     ] |* amp 0.9
 
-bpm 155
+bpm 154
 
 all $ (# nudge "-0.07")
+
+d1 $ metro
+
+d1 silence
 
 hush
 
@@ -775,7 +879,7 @@ do
                  # rsend 2.0 # dsend 0.85
                  # drive' 0.4 0.2 0.01 0.2
   d4 -- $ off (1/8) ((|* amp 0.55))
-    $ discreto |* amp 1.1 -- 0.4
+    $ discreto |* amp 0.7   -- 0.4
 
 d5 $ every 3 rev $ slow 16
   -- $ almostNever (
@@ -790,8 +894,8 @@ d5 $ every 3 rev $ slow 16
   # note "{58 61 63 68 70}%8"
   |+ note "<-12 -0 -12 0 -12 -5>"
   |+ note (choose [0, 7, 9])
-  # amp 0.02-- 0.065 --- 0.009
-  # drive 0.8
+  # amp 0.02 -- 0.03
+  # drive 0.4 -- 0.8
   # bias 0.3
   # width (slow 2 $ range 0.01 0.15 sine)
   # lpfreq (slow 6 $ range 4500 3500 tri) # lpres 0.3

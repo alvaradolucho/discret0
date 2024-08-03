@@ -45,6 +45,7 @@ let target = Target {
     bufTempo = pF "bufTempo"
     cQuantum = 4
     curve = pF "curve"
+    damp = pF "damp"
     decay = pF "decay"
     delayfb = pF "delayfb"
     detune = pF "detune"
@@ -79,6 +80,7 @@ let target = Target {
     pw = pF "pw"
     ratio = pF "ratio"
     rel = pF "rel"
+    resolution = pI "resolution"
     rsend = pF "rsend"
     saturation = pF "saturation"
     shape = pF "shape"
@@ -167,6 +169,7 @@ let p = streamReplace stream
 -- funciones mejoradas
 :{
 let bpm b = setcps(b / 60 / 4)
+    print_delay_time bpm period = print (period * 60000 / bpm)
     mute p = (degradeBy 1) $ p
     sinosc min max freq = (fast freq $ range min max sine)
     triosc min max freq = (fast freq $ range min max tri)

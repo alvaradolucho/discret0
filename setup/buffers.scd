@@ -40,13 +40,16 @@ samplesPath.entries.do({ | i |
 				var startPos, endPos;
 				var bufnum = b[folder][buf];
 				var numFrames = max(BufFrames.ir(bufnum), 1);
+				var sampleDur;
 
 				// quiero que bufTempo=(l.tempo * 60) ???
 				// quiero que speed dependa del sample.
 
 
 				speed = if(unit=='c', (l.tempo * 60) / bufTempo, 1);
-				rate = ( rate * speed ) * BufRateScale.ir(bufnum);
+				sampleDur = (dur * (( rate * speed).reciprocal * absdif(begin, end) )) * BufDur.ir(bufnum);
+
+				rate = ( rate * speed) * BufRateScale.ir(bufnum);
 
 				startPos = if(
 					(rate < 0) * (begin <=0),
@@ -54,21 +57,21 @@ samplesPath.entries.do({ | i |
 					numFrames * begin);
 
 				phasor = Phasor.ar(
-					rate: rate,
+					rate: rate * dur.reciprocal,
 					start: startPos,
 					end: ( numFrames  * end ) * (rate > 0);
 				);
 
-				dur = ( (dur * speed.reciprocal) * ( (end - begin) ).abs) * BufDur.ir(bufnum);
-				dur.poll;
 
-				trig = Trig1.ar(t_trig, 0.97 * dur);
+				//dur.poll;
+
+				trig = Trig1.ar(t_trig, 0.97 * sampleDur);
 				//trig = Gate.kr(t_trig)
 				sig = GrainBuf.ar(
 					numChannels: 2,
 					//trigger: trig,
-					trigger: Impulse.ar(ngrains),
-					dur: overlap / ngrains,
+					trigger: Impulse.ar(ngrains * dur),
+					dur: ( overlap / ngrains ) * dur.reciprocal,
 					sndbuf: bufnum,
 					rate: rate,
 					pos: phasor / numFrames,
@@ -81,7 +84,7 @@ samplesPath.entries.do({ | i |
 					\atk.kr(0.0),
 					\decay.kr(0.1),
 					\sus.kr(1.0),
-					\rel.kr(0.2) * dur
+					\rel.kr(0.2) * sampleDur
 				);
 				sig = sig * EnvGen.ar(
 					env,

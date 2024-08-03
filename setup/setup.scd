@@ -8,14 +8,14 @@ s.options.blockSize_(256); // default: 64
 s.latency_(0.3);
 
 //s.options.outDevice_("MME : Altavoces");
-//s.options.outDevice = "ASIO : Model Mixer ASIO";
+s.options.outDevice = "ASIO : Model Mixer ASIO";
 //s.options.outDevice = "ASIO : US-122 MKII / US-144 MKII";
-s.options.outDevice = "ASIO : JackRouter";
+//s.options.outDevice = "ASIO : JackRouter";
 //s.options.outDevice = "ASIO : ReaRoute ASIO (x64)";
 //s.options.outDevice = "ASIO : SSL ASIO Driver 1";
 
-s.options.numInputBusChannels_(8);
-s.options.numOutputBusChannels_(8);
+s.options.numInputBusChannels_(2);
+s.options.numOutputBusChannels_(2);
 
 ~out = 0;
 ~makeBusses = {

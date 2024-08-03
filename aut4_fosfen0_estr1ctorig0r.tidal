@@ -1,0 +1,220 @@
+-- automat4
+-- liveset
+-- fosfeno || estricto_rigor
+-- 03|07|24
+
+----------------------------------------------
+-- setup
+----------------------------------------------
+bpm 138
+
+d1 $ metro # dur 0.4 # adsr' 0.001 0.1 0.1 0.1
+
+all $ (# nudge "-0.02")
+
+----------------------------------------------
+-- 001
+----------------------------------------------
+
+d1 -- $ rev
+  $ always (
+     (# pan (randosc "-0.7" 0.7)) .
+     (# width (randosc 0.01 0.5))
+     )
+   $ almostNever (off (3/8) ( (|* amp 0.7 ) . (|+ note "7 12 9")))
+   $ arpeggiate
+   $ note "<gs'<sus2 sus4>!15 as'<sus4 sus6>>*4"
+  # s "claroquesi"
+  -- |+ note 48
+  |+ note (choose [48, 48, 48, 48, 60])
+  # adsr' 0.005 0.05 0.1 0.1
+  # dur (sinosc 0.01 0.2 0.125)
+  |+ dur (randosc 0.02 0.1)
+  # drive' 0.5 0.1 0.1 0.2
+  # amp (sinosc 0.01 0.05 0.125) |* amp 0.01
+  # dsend 0.75 # detune 1.025
+  # rsend 0.6
+
+d1 silence
+
+hush
+
+d2
+  $ almostNever (|+ note 12)
+  $ note "<cs'min9!3 ds'min9 cs'min9!7 ds'min9>"
+  |+ note 36
+  # s "FMpad"
+  # amp 0.02 |* amp 1.0
+  # adsr' 1 0.5 0.8 3.5 # dur (sinosc 0.35 1 0.125)
+  # detune (sinosc 0.98 1.02 0.125)
+  # width "<0.5 0.4 0.3 0.2 0.1 0.05 0.02>"
+  # dsend 0.35 # rsend 0.3 # high 0.2
+
+hush
+
+-------------------------------------
+--- tek01
+
+-- supercollider
+
+
+---------------------------------------
+--- 002
+
+bpm 138
+all $ (# nudge "-0.03")
+print_delay_time 138 1.5
+
+-- droneFM
+d2 $ s "droneFM" # amp 0.05 |* amp 0.0125
+    # note (choose [34, 34, 34, 34, 34, 39])
+    |+ note "<0 0 12 24 0>"
+    # pan (randosc "-0.5" 0.55)
+    # dsend 0.3 # rsend 0.3
+
+hush
+
+-----------
+--- cuarto 002.2
+
+d1 -- $ whenmod 5 7 (# dsend 0.5)
+  $ sometimesBy 0.1 (|+ note 12)
+  $ note "34*16?0.05"
+  # s "padstecno4"
+  |+ note 12
+  # amp 0.06 # dur 0.05
+  # adsr' 0.001 0.1 0.2 0.3
+  # hpfreq 110
+  # detune (randosc 0.985 1.015)
+  -- # lpf' (randosc 200 700) 0.8
+  # lpf' (sinosc 800 2400 0.25) 0.6
+  |+ lpf' (randosc 100 1000) (randosc 0.1 0.2)
+  # drive' 0.9 0.3 0.15 0.15
+  # width (randosc 0.1 0.0001)
+  # dsend 0.07
+  |* amp 0.0125
+
+d2 silence
+
+d2  $ degradeBy 0.9
+  $ degrade
+  $ sometimesBy 0.25 (
+    off (1/4) (
+    (|* amp 0.75) . (|+ note (choose [17, 19]))
+    )
+  )
+  $ sometimes (off (1/8) (|* amp 0.8))
+  $ slow "<2 1.5 1>"
+  $ sometimes (|+ note "<0 9 7 12>")
+  $ note "46" # s "padstecno4"
+  # amp 0.12
+  # dur 3.5 # width 0.1
+  # adsr' 0.1 1 0.75 7.5
+  |* amp 0.7
+
+all $ (# nudge "-0.02")
+
+hush
+
+d1 $ struct "{t t t}%16"
+  $ s "filmbass4" # note "as" |+ note (choose[24, 24, 24, 24, 25, 24]) |+ note 12
+  # adsr' 0.01 0.1 0.1 0.5 # dur 0.2
+  # amp 0.05 |+| feedback (sinosc 0.5 1.8 0.125)
+  |* amp 0.0
+
+d1 silence
+
+d2 -- $ sometimes (fast 2)
+  -- $ jux rev
+  -- $ off (1/16) (|* amp 0.85)
+  -- $ struct "{t t t t}%8"
+  $ sometimesBy 0.25 (off (1/8) (|* amp 0.85) . (|+ note 12))
+  $ struct "t"
+  $ s "filmbass5" # note "ds <d ds> <ds d>"
+  -- |+ note 24
+  |+ note (choose [24, 24, 36])
+  |+ note "<0!4 12!3 <13 1>>"
+  |+| feedback (randosc 4 60)
+  # adsr' 2 0.1 0.1 5.1 # dur 8
+  # detune 1.015
+  # amp 0.04
+  # drive' 0.5 0.1 0.2 0.1
+  |* amp 0.8
+
+hush
+
+--------------------------------------------------------------------
+-- robot
+bpm 139
+
+d1 silence
+
+d3 -- $ every 8 (slow 2) $ every 4 rev $ every 2 (jux rev) $ every 4 rev $ slow 2
+  -- $ note "[[59 57] [54 55] [54 52] [54 52]]!2" |+ note "<0 12>"
+  -- $ note "[[59 57] [54 55] [61 61], [54 52] [54 52], [49 49]]!4"--  |+ note "<0 12>"
+   $ fast 2
+   $ every 4 (jux rev)
+    $ note "[<59 57>(3, 8, <1 3>),  <61 63 64>(<5 7>, 8, 2)]"
+  -- $ note "[[59 57] [54 55] [54 52] [54 52]]!2" |+ note "<0 12>"
+  -- $ note "[[59 57] [54 55] [61 61], [54 52] [54 52], [49 49]]!4"--  |+ note "<0 12>"
+   -- |+ note "<-12 0 12 <0 <12 24>>>"
+   |+ note "<-12 0 12 0>"
+  # s "aaa"
+  #  amp (range 0.007  0.15 rand)
+  |* amp 0.3
+  # atk 0.02 # rel "<0.05, 0.17>"
+  # formantfreq (randosc 2400 4800) # width 0.1
+  # detune (randosc 0.98 1.02) |* detune "<1 1.01>"
+  # pw "0.8 0.6 0.9"
+  # shape (range 0.4 1.8 rand) |* shape 0.2
+  # lpfreq "<2000 1200 500 1000>" |* lpfreq "0.5 0.75" |* lpfreq 4.2
+  # lpres 0.6
+  # hpfreq 120
+  # dsend 0.6 # waveshape 0.2
+  # rsend 0.4
+   # vibratodepth "-0.2 -0.5"
+
+d4 silence
+
+d4 $ sometimes (|* amp 0.5) $ every 3 (fast 4)
+  $ note "[69, 55](<7 5 9>, 16, <2, 0, 5>)"
+  # s "aaa"
+  |+ note "<0 -12 -12 <12 7>>"
+  # amp 0.15 |* amp 0.4 # width 0.9
+  # pan (range 0.0 1.0 rand) |* pan 1.0
+  # atk "0.001 0.01 0.01"
+  # rel 0.1 # vibratofreq 2.4 # vibratodepth "-0.1"
+  # lpfreq (range 4550 1200 sine ) |* lpfreq 0.7
+  # hpfreq 350
+  # dsend 0.4
+
+  d4 silence
+
+do
+  let robot = -- slow 2 $ rarely (slow 2) $
+            jux rev $ s "<aaa aaa2>(<9 11>, 16, <0 2>)?0.5"
+            # note (choose [55, 57, 62, 65, 67])
+            |+ note "{12 0 7}%8" |+ note "<-12 0 0 7>"
+            # detune "1.01 0.99" # dur 0.5 |* detune 0.5
+            # atk 0.4 # rel 2.8
+            # lpfreq (sinosc 2200 2800 0.125) -- (slow 8 $ range 1200 4800 sine)
+            # lpres 0.1
+            # rsend (range 0.9 1.5 rand) # dsend 1.5
+  let liquidos = slow 2
+            $ note "[<69 67 74>, <62, 64, 59>]" |+ note "<0 7 12>"
+            |+ note "<12 0>"
+            # s "soft" # amp 0.32 # detune "<1.01 0.991>"
+            # atk 2.5 # rel 7.5
+            # lpfreq 1800 # freqmod 1.01 # flutterdepth 0.985
+            # rsend 0.85 # drive' 0.01 0.01 0.01 0.01
+  d1 $ mute $ slow 2 $ rarely (slow 2) $ ((# adsr' 0.4 0.4 0.2 1.8).(|* amp 0.7))
+    $ robot |* amp (choose [0.3, 0.125, 0.05])
+    |* amp 0.1
+    -- # adsr' 0.01 0.1 0.4 0.5 # dsend 1.2
+  d2  $ liquidos |* amp 0.01
+
+hush
+
+do
+  d3 silence
+  d4 silence

@@ -574,16 +574,37 @@ hush
 
 struct "t*16" $ s "4"
 
+d1 $ struct "t*4" $ s "707" # buf 0 # dur 0.7 # amp 0.2 # drive' 0.5 0.2 0.1 0.1
+
+d2 $ plyWith "<2 4 6 8 16>" (|* amp 0.9) $ rev $  (off (1/16) (|* amp 0.9)) $ struct "~ <t [~ t]> ~ t" $ s "707"
+  # buf 2 # dur 0.7 # amp 0.015 |+| rsend (choose [0, 0.3, 0.5]) |+| rate (choose [1, 2, 0.7, 4]) # drive' 0.5 0.2 0.1 0.2
+    # lpf' (sinosc 1500 7500 0.125) 0.8
+
+d3 $ stack [
+    struct "t*16" $ s "tambourine" # buf 0 # pan "-1.0",
+    struct "t*16" $ s "tambourine" # buf 1 # pan "1.0"
+  ] # amp "{0.001 0.005 0.05}%16" # rate 5
+
+d4 $ sometimes (|+ note "<-12 -12 -12 -7>") $ note "[<62 60>, <67 69>](<3 5>, 8, <0 2>)" # s "<dreamy aaa2>" # adsr' 0.1 0.1 0.4 1 # dur 0.25 # amp "<0.4 0.1>" # dsend 0.5 # detune "<1.5 1.01 1.5>"
+
+d5 $ rarely (|+ note 12)
+ $ note "<26 26 26 26 38>*16" # s "filmbassNuevo2" # amp 0.07 # lpf' (randosc 500 3500) 0.7 # feedback (randosc 0.9 3.6)
+
 do
   let r1 = "0 1 2 3 0 1 2 3 0 1 2 3 0 1 2 3"
       r2 = "0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7"
-  d1 $ loopAt 2 -- $ slice 16 r1
-    -- $ rarely (off (1/32) ((|* amp 0.65)))
-    $ slice 16 r2
-    $ s "breaks" # buf 0 # amp 0.15 # dur 1.0 # rate 0.8
-    # ngrains 120 # bufTempo 165 # rsend 0.3
-    # drive' 0.3 0.1 0.1 0.1
-    # lpf' 6500 0.1
+  d1 $ degradeBy 0.9
+    $ plyWith (randosc 0 11) ((|* amp 0.9) . (|* rate (randosc 0.97 1.03)))
+    $ loopAt 2 -- $ slice 16 r1
+    $ sometimes ( jux rev)
+    $ rarely (off (1/32) ((|* amp 0.75) .(|* rate "< 1.0 1.5>")))
+    $ splice 16 "0 <1 0> 2 [ ~ 3] <4 2> <[15 17] [0 5]> 6 7 8 9 10 11 <12 [11 12]> 13 14 <15 10> "
+    $ s "breaks" # buf 0 # amp 0.15
+    # rate 0.9  # dur 0.85
+    -- |* begin (randosc 0.99 1.01)
+    # ngrains 210 # bufTempo 165 # rsend 0.3
+    # drive' 0.4 0.1 0.1 0.1
+    |+| lpf' (randosc 2500 7500 ) 0.01 # bufTempo 165
     -- |+| lpf' (triosc 750 4500 0.2) 0.7
 
 d2 $ struct "t*16" $ s "tambourine" # buf 0 # amp 0.3 # dur 1

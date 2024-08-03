@@ -329,3 +329,190 @@ x2 $ every 3 (jux rev) $ s "oh(<15 11>, 16)"
    # feedback "1.4 0.2 1.5 0.7 0.2 2.5 0.4 0.6"
    # drive 0.75
    # amp 0.0235
+
+
+-------------------------------------------------------------
+-- jul 2024
+-- ambient techno
+
+bpm 136
+
+d1 $ metro # dur 0.4 # adsr' 0.01 0.1 0.1 0.1
+
+all $ (# nudge "-0.07")
+
+hush
+
+d2 silence
+
+d1 $ rarely (off (1/16) ((|* amp 0.8)))
+  $ struct "t*4"
+  -- $ struct "<[t*4]!15 t(3, 8, 2) [t*8]!8>"
+  $ note "<<cs'min7 cs'min9>!16 cs'min13!16>" |+ note 48
+  # s "el_campo" # octmod "<2!15 <3 4>>"
+  # amp 0.014 # dsend 0.8 |+| feedback (sawosc 0.7 2.3 0.125)
+  # rsend 0.5 |* amp 0.01  -- 0.46
+
+d1 silence
+
+d2  $ degradeBy 0.75
+  $ struct "t*16?0.15"
+  $ amp (randosc 0.06 0.23) |* amp 0.0 -- 0.34
+  # s "noisecito" # adsr' 0.001 0.03 0.01 0.01 # dur (randosc 0.01 0.05)
+  # lpf' (sinosc 1500 7500 0.125) (triosc 0.8 0.3 0.25)
+  # rsend 0.1
+
+d2 silence
+
+-- fade out d1
+
+do
+  let nota = "fs*16"
+  -- let nota = "ds*16?0.35"
+  let nota = "{ds!5 fs!3}%16?0.35"
+  -- let nota = "<{~!3 gs!5 ~!4 cs!3}%16?0.45 ~>"
+  d3 $ almostNever (plyWith "2" ((|* amp 0.6) . (|+ note "<0!5 -7>") .(|* dur 0.8)))
+    $ degradeBy 0.25
+    $ rarely (|+ note "<1 1 1 1 1 1 1 6>")
+    $ note nota
+    # detune (sinosc 0.98 1.02 0.125)
+    # s "claroquesi" # amp 0.07   |+ note "60"  |- note 7
+    -- |* amp 3 |- note "12"
+    # adsr' (sinosc 0.05 0.0001 0.125) 0.1 0.1 0.01 # dur 0.026 # width (triosc 0.001 0.1 0.125)
+    # drive' 1.2 0.3 0.1 0.1  # rsend 0.2 # dsend 0.4
+    |* amp 0.7
+
+d3 silence
+
+hush
+
+
+--- segundo A
+-- bpm 138
+
+d1 $ metro # dur 0.3
+
+all $ (# nudge "-0.068")
+
+hush
+
+d3 silence
+
+d1 -- $ off (1/16) ((|* amp 0.8).(|+ buf 7))
+  $ struct "t*16"
+  $ s "labsminipunk" # buf 33 # amp 0.2 |+| dur (triosc 0.07 0.12 0.125)
+  # adsr' 0.001 0.07 0.06 0.02 # rate 1 # hpfreq 120 -- # drive' 0.2 0.01 0.1 0.2
+  |+| lpf' (sinosc 500 5500 0.125) (triosc 0.82 0.465 0.25) # dsend 0.3
+  |* dur 0.6 # drive' 0.9 0.00 0.1 0.2
+  |* amp 0.25 |* dur 1.1
+
+d3
+  --  $ almostNever ((|- note "12") . (|* amp 2) . (|* feedback 2.5))
+  -- $ often ( off (1/8) ( (|* amp 0.95 ) . (|+ note "7") ) )
+  $ struct "t*16?0.8"
+  $ s "noisecito3" # note (choose [61, 62]) |+ note 0
+  |- note 0
+  # amp 0.04 # dur 2
+  # feedback 1.2 # rsend 0.7
+  # adsr' 1.5 0.5 0.7 1.5
+  # lpf' 2500 (randosc 0.3 0.8)
+  -- # drive' 0.3 0.01 0.1 0.1
+  # saturation 0.99
+  |* amp 0.05 -- 0.6
+
+d1 silence
+
+d2 $ rarely (slow 2) $ struct "<t*16?0.25 t*16?0.5 t*16?0.75>"
+  $ s "noisecito2" # amp (sinosc 0.01 0.1 0.125) |* amp 0.05
+  # adsr' 0.001 0.05 0.1 0.05
+  |+| dur (randosc 0.01 0.06)
+  # lpf' (triosc 4500 9500 0.0625) (sinosc 0.87 0.7 0.125)
+  # dsend 0.1 # rsend 0.25
+
+d3 silence
+
+hush
+
+
+d1 -- $ striate 40
+  -- $ whenmod 2 9 (off (1/8) (|* amp 0.7))
+  -- $ every 8 (off(1/16) (|* amp 0.9))
+  $ striate (irand 200 + 50)
+  $ sometimes (
+    plyWith "4" ((|* amp 0.9) . (|* rate 1.1))
+    )
+  $ s "707" # buf 10 # amp 0.04
+  -- # rate (choose [1.0, 3.0])
+  -- # dsend 1.0
+  # rsend 0.35 # rate 0.85
+  |* amp 0.1
+
+d1 silence
+
+hush
+
+-----------------------------------
+-- segundo B
+
+bpm 138
+
+all $ (# nudge "-0.06")
+
+hush
+
+d2 --  $ off (1/16) ( ( # detune (sinosc 1.0 0.98 0.125)) . (|* amp 0.75))
+  $ note "[57, 64]*16?0.125" # s "claroqueno" # amp (triosc 0.07 0.009 6) # dur 0.07
+  # adsr' 0.02 0.14 0.8 0.22
+  # width (sinosc 0.35 0.01 0.125)
+  # lpf' (sinosc 5200 500 0.125) (triosc 0.9 0.35 0.25) # dsend 0.7
+  |* amp 0.5
+
+d2 silence
+
+hush
+
+d3 silence
+
+d3 -- $ degradeBy 0.25 $ sometimes (|+ note 12)
+  $ often (off (1/16) (|* amp 0.9))
+  $ almostNever (|+ note 12)
+  $ s "ola*8"
+  # note "[50, 41]"
+  # amp (sawosc 0.01 0.12 0.25) # width (randosc 0.01 0.3) # detune (randosc 1.03 0.99)
+  # adsr' 0.02 0.1 0.1 (sawosc 0.5 0.01 0.25) # dur (sawosc 0.2 0.75 0.25)
+  |* amp 0.00
+
+
+d2 $ whenmod 14 4 (|+ note "-12") $ slow 4 $ struct "{t t t}%16"
+  $ s  "noise_resonator" # note "<50!6 55!6>" # amp 0.064 # dur 1
+  # lpf' (triosc 1200 3500 0.125) (sinosc 0.5 0.1 0.25) # rsend 0.2
+  |+| damp (sinosc 0.5 0.7 0.125) |+| resolution (irand 20 + 5)
+  |* amp 0.4
+
+
+d1 $ whenmod 14 4 (|+ note "<-12 -5>") $ slow 4 $ struct "{t t t}%16"
+  -- $ s  "<noise_resonator!7 noise_resonator3>"
+  $ s "noise_resonator"
+  # note "<50!6 55!6>" # amp 0.06 # dur 1
+  |+| lpf' (triosc 500 3500 0.125) (sinosc 0.3 0.1 0.25) # rsend 0.2
+  # adsr' 1.0 0.3 0.7 2.1
+  |+| damp (sinosc 0.5 0.7 0.125) |+| resolution (irand 10 + 7)
+  |* amp 0.3
+
+hush
+
+
+----------------
+-----------------
+
+d3 silence
+
+
+d3 $ whenmod 10 5 (|+ note 7) $ struct "{t t t t t t}%8" $ s "noise_resonator3"
+  # note "[<40!7 39>, <43!7 49>]" # amp 0.1 |+| dur (sinosc 0.125 0.5 0.125)
+  |* amp 0.2
+
+d1 $ sometimes (off (1/16) (|* amp 0.5))
+  $ sometimes (fast 2)
+  $ struct "t*4" $ s "ringz"
+  |+| note (choose [70, 75, 80, 85, 77]) # amp 0.1 # dur 0.05

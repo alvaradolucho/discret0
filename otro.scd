@@ -48,6 +48,8 @@ SynthDef(\ola, { | amp=0.1, freq=220, t_trig=1 |
 		highgain: 0.4
 	) * 0.2;
 
+	sig = HPF.ar(sig, 80);
+
 	sig = Balance2.ar(sig[0], sig[1], \pan.kr(0.0));
 
 	Out.ar(~bus[\main], sig);

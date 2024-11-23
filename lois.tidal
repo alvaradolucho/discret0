@@ -1,0 +1,224 @@
+
+bpm 125
+
+d1 $ s "808bd*4" # buf 2 # amp 0.1 # dur 0.2
+  # drive' 0.7 0.2 0.2 0.7
+
+d2 $ s "[~ 808oh]*4" # buf 0 # amp 0.05 # dur 0.2
+
+d3 $ s "~ 707 ~ 707" # buf 3 # amp 0.1 # dur 0.4
+  # adsr' 0.001 0.1 0.99 0.1 # rsend 0.2
+  # drive' 0.7 0.3 0.1 0.3
+
+d4 $ every 8 (|+ note 1)
+  $ struct "t*16?0.1"
+  $ s (choose ["filmbass", "filmbass5"])
+  # note (choose [35, 35, 47]) # amp 0.1
+  # detune (randosc 0.98 1.02)
+  # lpf' (sinosc 2500 4500 0.25) (randosc 0.5 0.8)
+  # feedback (sinosc 1.5 3.4 0.125) # drive' 0.5 0.2 0.2 0.2
+
+d5 $ whenmod 12 4 (|+ note 7)
+  $ note "[59, <66!7 <66 69>>]" # s "discreet3" # amp 0.02
+  # lpf' 5500 0.6 # detune (randosc 0.99 1.01)
+  # adsr' 2 0.1 0.9 4.5 # dur 3
+  # rsend 0.5 # dsend 0.6
+
+d6 $ rarely (off (1/32) ((|* amp 0.9)))
+  $ struct "t*16" $ s "amencutup" # buf (run 16 + 5)
+  # amp 0.05 # rsend 0.3 # rate 0.85 # lpf' 10000 0.1
+
+hush
+
+bpm 100
+
+d4 $ stack [
+  s "tambourine*8" # buf 0 # amp 0.1 # pan "-1.0",
+  s "[tambourine]*8" # buf 3 # amp 0.1 # pan "1.0"
+]
+
+hush
+
+d1 $ sometimes (off (1/16) ((|* amp 0.9)))
+  $ struct "t*8" $ s "dk2muteguitar"
+  # buf "[<50!7 60!7>, <57!4 55!4>]"
+  # amp (triosc 0.1 0.5 0.5) # dur 0.15 # rate (randosc 0.985 1.01)
+  # pan (sinosc "-0.75" "-0.25" 0.125)
+  # dsend 0.35
+
+d2 $ sometimes (off (1/16) ((|* amp 0.9)))
+$ every 6 (|+ buf 5)
+  $ struct "[~ t]*8" $ s "dk2muteguitar"
+  # buf "[60, 52]"
+  # amp (triosc 0.5 0.1 0.5) # dur 0.15 # rate (randosc 0.985 1.01)
+  # pan (sinosc "0.75" "0.25" 0.125)
+  # dsend 0.35
+
+d3 $ note "[52, 57]*16?0.7"
+  # s "filmbass"
+  |+ note "<7 12 17 0>"
+  # amp 0.4 # dur 0.1
+  # adsr' (randosc 0.001 0.2) 0.1 0.1 1.1
+
+
+
+--------------
+
+d1 $ stack [
+  struct "t*4" $ buf 0 # amp 0.1
+] # s "707"
+
+do
+  let chords = "50 [57 59]"
+  d4 $ sometimes (off (1/8) (|- note 12))
+    $ off (1/16) ((|+ note "<7 9>"))
+    $ note chords # s "dreamy2" # amp 0.2
+    # adsr' 0.1 0.1 0.1 1 # dur 0.5
+    # detune (randosc 0.985 1.015)
+    # rsend 0.75 # dsend 0.9
+    # flutter (choose [0.5, 0.25, 4, 2])
+    # nSynths (choose [ 4, 8, 16, 32])
+    # ampmodfreq (choose [2, 2, 4, 4, 0.5, 0.5])
+    # drive' 0.5 0.1 0.1 0.1
+
+
+------- ambient techno 1
+
+d5 $ s "discreet" # note "[<52 54>, <57 57 64>, <59 62>]" # amp 0.03
+  # detune (randosc 0.985 1.015)
+  # dur 2 # adsr' 2 1 0.8 2
+  # lpf' (sinosc 780 2500 0.125) 0.6
+  # rsend 0.3 # drive' 0.5 0.1 0.1 0.1
+
+d6 $ sometimes (fast 2)
+  $ s "blip(3, 8, 2)" # note (choose [69, 72, 74]) # amp 0.3
+  # adsr' 0.01 0.1 0.1 0.1 # dsend 0.2
+  # pan "-1.0"
+
+d7 $ sometimes (fast 2)
+  $ s "blop(<5 3>, 8, 2)" # note (choose [80, 72, 74]) # amp 0.2
+  # adsr' 0.01 0.1 0.1 0.1 # dur 0.05 # rsend 0.2
+  # pan "1.0"
+
+
+d1 $ rarely (ply "<2 3 2>") $ struct "<[t*4]!7 [{t ~ t}%8]>"
+  $ s "808bd" # buf 2 # amp 0.1 # dur 0.2
+  # drive' 0.7 0.2 0.2 0.7
+
+d2 $ s "[~ 808oh]*4" # buf 14 # amp 0.01 # dur 0.2
+  # lpf' 6500 0.4 # drive' 0.5 0.2 0.0 0.2
+
+d3 $ every 4 (
+    off(1/16) (|* amp 0.8)
+  )
+  $ s "~ 707 ~ 707" # buf 3 # amp 0.1 # dur 0.4
+  # adsr' 0.001 0.1 0.99 0.1 # rsend 0.2
+  # drive' 0.5 0.1 0.1 0.2
+
+d8 $ stack [
+  s "tambourine*4" # buf 0 # amp 0.1 # pan "-1.0",
+  s "[~ tambourine]*4" # buf 2 # amp 0.1 # pan "1.0"
+]
+
+---
+
+d4 $ sometimes (off (1/16) ((|+ note "<0 12>")))
+  $ s "filmbass*8" # note "<47 45> <47 45> 45 45 45 45 <45 47> <45 47>"
+    # amp 0.1 # feedback 0.9
+    |+ note "-12"
+
+d5 $ every 3 rev $ sometimes (|+ note "<-2 2 7>")
+  $ s "aaa(<3 5>, 8, <2 1>)"
+  # note "[72, 74, 79]" # amp 0.1 # dsend 0.5
+
+d6 $ sometimes (off (1/4) (|+ note "<7 9 7>"))
+  $ s "aer" # note "<52 54 59 62 54 49>" # amp 0.05
+  # dur 2 # adsr' 2 1 0.8 2
+
+d5
+  $ s "costero*8" # note "[<52 54 59 62 54 49>, <45 45 32>]" # amp 0.2
+  # dur 0.8 -- |+ note (choose [0, 7, 14])
+  # rsend 0.5
+
+d1 silence
+d2 silence
+d3 silence
+d4 silence
+
+hush
+
+
+---------------------------------
+--- finalmente patterns
+
+bpm 130
+
+d1 $ stack [
+  struct "t*4" $ s "707" # buf 0 # amp 0.2
+  # rate 0.6 # lpf' 2500 0.2 # hpfreq 120,
+  struct "t*4" $ s "808bd" # buf 0 # amp 2
+  # rate 0.6 # lpf' 2500 0.2
+  ] # adsr' 0.001 0.1 0.9 0.1
+  # drive' 0.7 0.1 0.2 0.1
+
+d2 $ stack [
+  struct "[~ t]*4" $ s "707" # buf 9 # amp 0.2,
+  rarely rev $ struct "[~ <t [~t]>]*4" $ s "808"
+  # buf 1 # amp 0.1,
+  rarely rev $ struct "[[~ t] [~ t] ~ t]*2"
+  $ s "808oh" # buf 4 # amp 0.03
+  ] # hpfreq 1000 # rsend 0.1
+
+d3 --  $ note "42 42 42 42 42 42 42 42 42 42 42 43 43 43 42 42"
+   $ note "46 45 45 45 45 45 45 45 45 45 45 45 45 45 46 46"
+  # s "filmbassOld" # amp "{0.4 0.7 0.9}%16" # detune (randosc 0.98 1.02)
+  # dur 0.01 # adsr' 0.05 0.05 0.01 0.1
+  # feedback (randosc 1.1 2.2) # rsend 0.2
+  # lpf' (randosc 2200 4500) (randosc 0.6 0.8)
+  # drive' 0.9 0.1 0.3 0.1
+
+d6 -- $ sometimes (|+ note (choose [0, 7, -7, 9, -9, 12, -12]))
+  $ note "[<71 70>, 66](<11 13>, 16)" # s "aaa" # amp 0.1
+  # width 0.01 # rsend 0.3 # detune 1.5
+
+d5 -- $ sometimes (|+ note 12)
+  $ note "<54 54 54 54 55>" # s "aaa2" # amp 0.3
+  # width 0.01 # rsend 0.5 |+ note 12 # dur 4
+  # detune 1.5
+
+d4 $ note "[<42!6 40!2>, 45, 49, <52!4 53!4>]"
+  # s "padcito"
+  # amp 0.1 # detune (randosc 0.985 1.015)
+  |+ note 12 # rsend 0.5
+
+let drum_machine buffer structure sample = struct structure $ s sample # buf buffer
+
+let bd808 b s = drum_machine b s "808bd" # amp 0.7 # dur 0.2
+let oh808 b s = drum_machine b s "808oh" # amp 0.1 # dur 0.2
+let sd808 b s = drum_machine b s "808sd" # amp 0.4 # dur 0.2
+
+d1 $ stack[
+   bd808 0 "t*4",
+  cat [
+    oh808 2 "~ t ~ t ~ t ~ t",
+    oh808 2 "~",
+    oh808 3 "t(3, 8)"
+  ],
+  cat [
+    sd808 3 "~ t ~ t",
+    sd808 3 "~ t ~ t",
+    sd808 3 "~ t ~ t",
+    sd808 4 "~ t ~ [t [t t]]"
+  ]
+]
+
+do
+  let bass n = note n # s "filmbassOld" # amp 0.2 # feedback 1.5
+  d2 $ cat[
+    bass "42*16",
+    bass "42*16",
+    bass "42*16",
+    bass "48*16"
+    ]
+
+hush

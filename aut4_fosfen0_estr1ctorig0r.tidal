@@ -6,12 +6,13 @@
 ----------------------------------------------
 -- setup
 ----------------------------------------------
-bpm 138
+bpm 140
 
 d1 $ metro # dur 0.4 # adsr' 0.001 0.1 0.1 0.1
 
 all $ (# nudge "-0.02")
 
+hush
 ----------------------------------------------
 -- 001
 ----------------------------------------------
@@ -21,7 +22,7 @@ d1 -- $ rev
      (# pan (randosc "-0.7" 0.7)) .
      (# width (randosc 0.01 0.5))
      )
-   $ almostNever (off (3/8) ( (|* amp 0.7 ) . (|+ note "7 12 9")))
+   -- $ almostNever (off (3/8) ( (|* amp 0.7 ) . (|+ note "7 12 9")))
    $ arpeggiate
    $ note "<gs'<sus2 sus4>!15 as'<sus4 sus6>>*4"
   # s "claroquesi"
@@ -31,7 +32,7 @@ d1 -- $ rev
   # dur (sinosc 0.01 0.2 0.125)
   |+ dur (randosc 0.02 0.1)
   # drive' 0.5 0.1 0.1 0.2
-  # amp (sinosc 0.01 0.05 0.125) |* amp 0.01
+  # amp (sinosc 0.01 0.05 0.125) |* amp 0.4
   # dsend 0.75 # detune 1.025
   # rsend 0.6
 
@@ -66,7 +67,7 @@ all $ (# nudge "-0.03")
 print_delay_time 138 1.5
 
 -- droneFM
-d2 $ s "droneFM" # amp 0.05 |* amp 0.0125
+d2 $ s "droneFM" # amp 0.1 |* amp 0.5
     # note (choose [34, 34, 34, 34, 34, 39])
     |+ note "<0 0 12 24 0>"
     # pan (randosc "-0.5" 0.55)
@@ -82,7 +83,7 @@ d1 -- $ whenmod 5 7 (# dsend 0.5)
   $ note "34*16?0.05"
   # s "padstecno4"
   |+ note 12
-  # amp 0.06 # dur 0.05
+  # amp 0.6 # dur 0.05
   # adsr' 0.001 0.1 0.2 0.3
   # hpfreq 110
   # detune (randosc 0.985 1.015)
@@ -96,8 +97,8 @@ d1 -- $ whenmod 5 7 (# dsend 0.5)
 
 d2 silence
 
-d2  $ degradeBy 0.9
-  $ degrade
+d2  -- $ degradeBy 0.9
+  -- $ degrade
   $ sometimesBy 0.25 (
     off (1/4) (
     (|* amp 0.75) . (|+ note (choose [17, 19]))

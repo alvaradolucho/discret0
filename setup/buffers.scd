@@ -2,10 +2,12 @@
 // buffers
 var filePath, thisPath, samplesPath;
 var inst, instruments;
+var currentTempo = l.tempo;
 Buffer.freeAll;
 
 filePath = thisProcess.nowExecutingPath.dirname.dirname;
 samplesPath = filePath ++ "/samples/samples";
+//samplesPath = filePath ++ "/samples/dev";
 filePath = PathName.new(filePath);
 samplesPath = PathName.new(samplesPath);
 
@@ -34,7 +36,7 @@ samplesPath.entries.do({ | i |
 
 			SynthDef(synthName, {
 				| amp = 0.1, begin=0.0, end=1.0, delta=1.0, dur=1, t_trig=1,
-				rate=1.0, speed=1.0, bufTempo=135, overlap=2, ngrains=80, unit='k' |
+				rate=1.0, speed=1.0, bufTempo=135, overlap=2, ngrains=100, unit='k' |
 				var sig, trig, env;
 				var sawrate, phasor;
 				var startPos, endPos;
@@ -57,7 +59,8 @@ samplesPath.entries.do({ | i |
 					numFrames * begin);
 
 				phasor = Phasor.ar(
-					rate: rate * dur.reciprocal,
+					//rate: rate * dur.reciprocal,
+					rate: rate,
 					start: startPos,
 					end: ( numFrames  * end ) * (rate > 0);
 				);
@@ -65,13 +68,14 @@ samplesPath.entries.do({ | i |
 
 				//dur.poll;
 
-				trig = Trig1.ar(t_trig, 0.97 * sampleDur);
+				trig = Trig1.ar(t_trig, 0.9 * sampleDur);
 				//trig = Gate.kr(t_trig)
 				sig = GrainBuf.ar(
 					numChannels: 2,
 					//trigger: trig,
-					trigger: Impulse.ar(ngrains * dur),
-					dur: ( overlap / ngrains ) * dur.reciprocal,
+					trigger: Impulse.ar(ngrains),
+					//dur: ( overlap / ngrains ) * dur.reciprocal,
+					dur: overlap / ngrains,
 					sndbuf: bufnum,
 					rate: rate,
 					pos: phasor / numFrames,
@@ -91,7 +95,7 @@ samplesPath.entries.do({ | i |
 					trig,
 					doneAction: 2
 				);
-				sig = MoogVCF.ar(sig, \lpfreq.kr(8000), \lpres.kr(0.1));
+				sig = MoogVCF.ar(sig, \lpfreq.kr(12000), \lpres.kr(0.1));
 				sig = AnalogVintageDistortion.ar(sig,
 					\drive.kr(0.0),
 					\bias.kr(0.00),

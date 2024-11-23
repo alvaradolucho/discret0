@@ -2,10 +2,12 @@
 var parserTidal, parserTidalModular;
 var parser;
 var consolePrinter;
-var addrOpenStageControl = NetAddr("127.0.0.1", 8085); // FROM open stage control0
+var addrOpenStageControl = NetAddr("127.0.0.1", 8085); // FROM open stage control1
+var addrPlugData = NetAddr("127.0.0.1", 60367); // FROM plugdata
 
 thisProcess.openUDPPort(8080); // from tidalcycles
 thisProcess.openUDPPort(8085); // from open stage control
+thisProcess.openUDPPort(8086); // from plugdata
 thisProcess.openUDPPort(6010); // from superdirt
 thisProcess.openUDPPort(49162);  // from orca
 OSCFunc.trace(false);
@@ -15,6 +17,8 @@ OSCFunc.trace(false);
 
 parserTidal = { | data |
 	var dict = Dictionary.new;
+	var fader = 0;
+	//data.postln;
 	data = data[3..data.size];
 	forBy (0, data.size-1, 2, { | i |
 
@@ -22,6 +26,18 @@ parserTidal = { | data |
 		if (data[i].asSymbol == 'note', {
 			data[i] = 'freq';
 			data[i + 1] = data[i + 1].midicps;
+		});
+
+
+
+		if (data[i].asSymbol == 'amp', {
+			forBy (0, data.size-1, 2, { |i |
+				if (data[i].asSymbol == 'orbit', {
+				fader = ~faders[data[i + 1]];
+				//fader.postln;
+			});
+			});
+			data[i + 1] = data[i + 1] * fader;
 		});
 
 
@@ -53,6 +69,7 @@ parserTidal = { | data |
 
 parserTidalModular = { | data |
 	var dict = Dictionary.new;
+
 	data = data[3..data.size];
 	forBy (0, data.size-1, 2, { | i |
 
@@ -61,6 +78,8 @@ parserTidalModular = { | data |
 			data[i] = 'freq';
 			data[i + 1] = data[i + 1].midicps;
 		});
+
+
 
 
 		// convertir buf a argumento de synthdef
@@ -82,6 +101,7 @@ parserTidalModular = { | data |
 				});
 		});
 		});
+
 
 		dict.put(data[i].asSymbol, data[i+1]);
 	});
@@ -180,12 +200,19 @@ OSCdef(\sinte1orca, { |...args|
 
 // desde open stage control
 
+OSCFunc.trace(false);
 
 // faders
+
+
+
+
 
 OSCdef(\fader_1, { |msg|
 	msg.postln;
 }, '/fader_1', addrOpenStageControl);
+
+
 
 OSCdef(\fader_2, { |msg|
 	msg.postln;

@@ -8,16 +8,19 @@ s.options.blockSize_(256); // default: 64
 s.latency_(0.3);
 
 //s.options.outDevice_("MME : Altavoces");
-s.options.outDevice = "ASIO : Model Mixer ASIO";
+// s.options.outDevice = "ASIO : Model Mixer ASIO";
 //s.options.outDevice = "ASIO : US-122 MKII / US-144 MKII";
 //s.options.outDevice = "ASIO : JackRouter";
-//s.options.outDevice = "ASIO : ReaRoute ASIO (x64)";
+s.options.outDevice = "ASIO : ReaRoute ASIO (x64)";
 //s.options.outDevice = "ASIO : SSL ASIO Driver 1";
 
 s.options.numInputBusChannels_(2);
 s.options.numOutputBusChannels_(2);
 
-~out = 0;
+~out = 4;
+~faders = Array.fill(8, 1);
+~knobs = Array.fill(8, 1);
+
 ~makeBusses = {
 	~bus = Dictionary.new;
 	~bus.add(\main -> Bus.audio(s, 2));  // out 1-2
@@ -97,7 +100,7 @@ s.waitForBoot({
 		);
 		//sig = sig * \amp.kr(-3.dbamp);
 
-		Out.ar(\out.ir(0), sig);
+		Out.ar(\out.ir(2), sig);
 	}).add;
 
 	SynthDef(\delay, {
@@ -113,7 +116,7 @@ s.waitForBoot({
 			\modDepth.kr(0.01),
 			\modFreq.kr(0.1)
 		);
-		Out.ar(\out.ir(0), sig);
+		Out.ar(\out.ir(2), sig);
 	}).add;
 
 

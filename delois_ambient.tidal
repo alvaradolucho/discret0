@@ -1,0 +1,23 @@
+bpm 80
+
+let euler = 2.71828
+let gauss mean std = (euler ** (-(((randosc "-1.0" 1.0) - mean) ** 2) / (2 * (std ** 2)))) / (sqrt (2 * pi * (std ** 2)))
+
+
+-- ambiento 1
+d3 $ s "ambientillo*2" # amp 0.01
+  # freq "[150, 200]"
+
+d4 $ sometimesBy 0.1 (# note 84)
+  $ note "<73 <71 ~ 71 ~ 87>>"
+  # amp 0.0 # adsr' 0.01 0.1 0.1 0.1
+  # s "aaa2" |> pan (gauss  0.0 0.5)
+  # rsend 0.5 # dsend 0.5
+
+  d1 $ stack [
+    struct "t*4?0.05" $ s "707" # buf 0 # amp 0.1,
+    struct "t*16?0.8" $ s "707" # buf 14 |> pan (gauss  0.0 0.5)
+    # rate 0.7 # amp (randosc 0.02 0.1)
+  ]  # rsend 0.6 # drive' 0.7 0.3 0.2 0.0 |* amp 0.25
+
+hush

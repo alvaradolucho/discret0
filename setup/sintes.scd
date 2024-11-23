@@ -76,7 +76,7 @@ SynthDef(\aer, { |freq=220, amp=0.1, gate=0.5 |
 	var env, sig;
 
 	freq = freq * [1, 1.001];
-	freq = freq * LFNoise1.kr(l.tempo / 15).range(-0.125, 0.02).midiratio;
+	freq = freq * LFNoise1.kr(l.tempo / 16).range(-0.125, 0.02).midiratio;
 	env = Env.perc(\atk.kr(0.1), \rel.kr(2.0)).ar(2);
 	/*env = EnvGen.ar(
 		Env.adsr(\atk.kr(0.02), \decay.kr(0.7), \sus.kr(0.15), \rel.kr(1.0)
@@ -564,7 +564,7 @@ SynthDef(\dreamy2, { | freq=220, amp=0.1, pan=0.0, nSynths=8, t_trig=1 |
 		doneAction: 2
 	);
 
-	freq = ( freq * [1, \detune.kr(1.01)] ) * LFNoise1.kr(\flutter.kr(4) * l.tempo).range(\flutterDepth.kr(-0.5), 0.00).midiratio;
+	freq = ( freq * [1, \detune.kr(1.01)] ) * LFNoise1.kr(\flutter.kr(4) * l.tempo).range(\flutterDepth.kr(-0.75), 0.00).midiratio;
 
 	//freq = freq * SinOsc.kr(\freqlfo.kr(1.125), Rand(0, 2pi)).range(\freqlfoDepth.kr(0.975), 1.005);
 
@@ -575,7 +575,7 @@ SynthDef(\dreamy2, { | freq=220, amp=0.1, pan=0.0, nSynths=8, t_trig=1 |
 	nSynths.do{ | i |
 
 		freq = freq * rrand(-0.01, 0.01);
-		sig = sig + LFPulse.ar(freq * ((1 * i) + 2),  width: \widthpulse.kr(0.6), mul: (amp / (i  + 0.5)))
+		sig = sig + LFPulse.ar(freq * ((1 * i) + 1),  width: \widthpulse.kr(0.016), mul: (amp / (i  + 0.25)))
 
 	};
 
@@ -585,7 +585,7 @@ SynthDef(\dreamy2, { | freq=220, amp=0.1, pan=0.0, nSynths=8, t_trig=1 |
 	//sig = Pan2.ar(sig.sum, pan);
 	sig = sig * env;
 
-	sig = sig * Saw.kr(\ampmodfreq.kr(2)).exprange(\ampmoddepth.kr(0.19), 0.99);
+	sig = sig * Saw.kr(\ampmodfreq.kr(2) * l.tempo).exprange(\ampmoddepth.kr(0.019), 0.99);
 	//sig = (sig * \saturation.kr(1.0) * \saturationLC.kr(1.0)).tanh * \attenuation.kr(1.0);
 	sig = MoogVCF.ar(sig, \lpfreq.kr(1500), \lpres.kr(0.1));
 	sig = HPF.ar(sig, 40);

@@ -345,13 +345,13 @@ hush
 
 d2 silence
 
-d1 $ rarely (off (1/16) ((|* amp 0.8)))
+d1 --  $ rarely (off (1/16) ((|* amp 0.8)))
   $ struct "t*4"
   -- $ struct "<[t*4]!15 t(3, 8, 2) [t*8]!8>"
   $ note "<<cs'min7 cs'min9>!16 cs'min13!16>" |+ note 48
   # s "el_campo" # octmod "<2!15 <3 4>>"
   # amp 0.014 # dsend 0.8 |+| feedback (sawosc 0.7 2.3 0.125)
-  # rsend 0.5 |* amp 0.01  -- 0.46
+  # rsend 0.5 |* amp 0.34  -- 0.46
 
 d1 silence
 

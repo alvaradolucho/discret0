@@ -18,6 +18,8 @@ d4 $ every 8 (|+ note 1)
   # lpf' (sinosc 2500 4500 0.25) (randosc 0.5 0.8)
   # feedback (sinosc 1.5 3.4 0.125) # drive' 0.5 0.2 0.2 0.2
 
+hush
+
 d5 $ whenmod 12 4 (|+ note 7)
   $ note "[59, <66!7 <66 69>>]" # s "discreet3" # amp 0.02
   # lpf' 5500 0.6 # detune (randosc 0.99 1.01)

@@ -14,8 +14,8 @@ s.latency_(0.3);
 s.options.outDevice = "ASIO : ReaRoute ASIO (x64)";
 //s.options.outDevice = "ASIO : SSL ASIO Driver 1";
 
-s.options.numInputBusChannels_(2);
-s.options.numOutputBusChannels_(2);
+s.options.numInputBusChannels_(4);
+s.options.numOutputBusChannels_(8);
 
 ~out = 4;
 ~faders = Array.fill(8, 1);
@@ -100,7 +100,7 @@ s.waitForBoot({
 		);
 		//sig = sig * \amp.kr(-3.dbamp);
 
-		Out.ar(\out.ir(2), sig);
+		Out.ar(\out.ir(7), sig);
 	}).add;
 
 	SynthDef(\delay, {
@@ -116,7 +116,7 @@ s.waitForBoot({
 			\modDepth.kr(0.01),
 			\modFreq.kr(0.1)
 		);
-		Out.ar(\out.ir(2), sig);
+		Out.ar(\out.ir(7), sig);
 	}).add;
 
 

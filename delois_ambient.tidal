@@ -3,6 +3,7 @@ bpm 80
 let euler = 2.71828
 let gauss mean std = (euler ** (-(((randosc "-1.0" 1.0) - mean) ** 2) / (2 * (std ** 2)))) / (sqrt (2 * pi * (std ** 2)))
 
+hush
 
 -- ambiento 1
 d3 $ s "ambientillo*2" # amp 0.01
@@ -16,8 +17,67 @@ d4 $ sometimesBy 0.1 (# note 84)
 
   d1 $ stack [
     struct "t*4?0.05" $ s "707" # buf 0 # amp 0.1,
-    struct "t*16?0.8" $ s "707" # buf 14 |> pan (gauss  0.0 0.5)
+    struct "t*16?0.8" $ s "707" # buf 14 |> pan (randosc  0.0 0.5)
     # rate 0.7 # amp (randosc 0.02 0.1)
-  ]  # rsend 0.6 # drive' 0.7 0.3 0.2 0.0 |* amp 0.25
+  ]  # rsend 0.6 # drive' 0.7 0.3 0.2 0.0 |* amp 0.25 # humanize
+
+hush
+
+--- nuevooo
+
+d1 $ stack [
+  struct "t*4" $ s "707" # buf 0 # amp 0.1 # hpfreq 60,
+  struct "~ t ~ t" $ s "707" # buf 3 # amp 0.2 # hpfreq 120,
+  struct "t*16" $ s "707" # buf 14 |> pan (randosc  "-0.5" 0.5)
+  # rate "<[0.7 0.7 0.9] [1.1 0.8]>/4" |+| amp (randosc 0.02 0.1) # adsr' 0.01 0.1 0.2 0.1
+  # hpfreq 1000
+]# drive' 0.7 0.3 0.2 0.0 |* amp 0.25
+
+d2 $ note "32*16" # s "filmbass" # amp 0.2 # adsr' 0.001 0.01 0.01 0.1
+
+
+
+
+d2 silence
+
+------------------------------------------------------------------------------
+--- prueba multitrack
+
+d1 $ struct "t*8" $ note (randosc 55 75) # s "blip" # amp 0.1
+  # adsr' 0.01 0.1 0.1 0.1
+
+d2 silence
+
+d1 $ struct "t*8"
+  $ note ( arpg "d'major7 [0,4,7,11]" )
+  # s "el_campo"
+  |+ note 54
+  # amp 0.05
+
+
+bpm 128
+
+d1 -- $ degradeBy 0.8 $ jux rev
+  -- $ sometimes ( off (1/8) (|+ note "<7 12 9>") )
+  $ jux rev
+  $ rarely ( off (1/16) (|+ note "<0 12>") . (|* amp 0.2))
+  $ struct "t*8"
+  -- $ note  ( arpg "f'major7 [0,6,3, 14, 11]" )
+  -- $ note ( arpg "c'major7 [2,4,9, 7, 11]" )
+  -- $ note ( arpg "e'min7 [2,4,9, 7, 11]" )
+  $ whenmod 12 4 ( # note ( arpg "d'maj7 [1,4,7,11, 14]" + 54 ))
+  $ note ( arpg "<g'maj7 f'maj7> [1,4,7,11, 14]" + 54)
+  -- $ note ( arpg "d'major7 [0,4,7,11]" )
+  # s "el_campo"
+  |+| amp (sinosc 0.05 0.12 0.05)
+  |+| pan (randosc "-0.5" 0.5)
+  # adsr' 0.1 0.1 0.5 0.5
+
+
+d1 $ slow 2 $ struct "t"
+  $ note (arpg "g'maj [0]" + "<24!6 12!2>")
+  # s "filmbass2" # dur 4
+  |+| detune (randosc 0.98 1.02)
+  # adsr' 2 0.1 0.8 2 # amp 0.2
 
 hush
